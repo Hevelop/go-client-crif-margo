@@ -1,0 +1,6078 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: PM_Margo@crif.com
+    name: Global Marketing Solution Team
+    url: https://www.crif.com/
+  description: '## Overview'
+  title: Global Marketing Solution
+  version: 1.0.0
+servers:
+- url: https://api-uat.crif.com/margo/v1
+security:
+- Password: []
+tags:
+- description: Common Data Controller
+  name: Common
+- description: Organization configurations Controller
+  name: Organization
+- description: Organization profile Controller
+  name: Profile
+- description: Portfolio Controller
+  name: Portfolios
+- description: Prospecting Controller
+  name: Prospecting
+paths:
+  /domains:
+    get:
+      description: |-
+        This method retrieves a list of all name of domains available in Margo.
+
+        For each domain the response will contain the **type** (it identifies the domain and it must be reported as parameter in the method **GET /domains/{domainType}**) and the **description** of the relative domain.
+      operationId: getDomains
+      parameters:
+      - description: Set here the language you want in output
+        explode: false
+        in: header
+        name: Accept-Language
+        required: false
+        schema:
+          default: en-GB
+          enum:
+          - en-GB
+          - it-IT
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DomainsType'
+                type: array
+          description: Successful response - returns an array of `Domain` entities
+            with metadata for pagination
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: List all domains
+      tags:
+      - Common
+  /domains/{domainType}:
+    get:
+      description: The GET request fetches the values of a `Domain` identified by
+        the domainType.
+      operationId: getDomain
+      parameters:
+      - description: Zero-based number of the page to obtain
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+        style: form
+      - description: It manages the maximum number of elements inside a response.
+          Maximum can't be more than 100.
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 15
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: the domain type a unique identifier for a `Domain`.
+        explode: false
+        in: path
+        name: domainType
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Set here the language you want in output
+        explode: false
+        in: header
+        name: Accept-Language
+        required: false
+        schema:
+          default: en-GB
+          enum:
+          - en-GB
+          - it-IT
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainArrayMetadataType'
+          description: Successful response
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: Get values of the domainType indicated
+      tags:
+      - Common
+  /products:
+    get:
+      description: This method allows to retrieve a list of products configured for
+        the organization. The GET method fetches a list of all `Product` entities.
+      operationId: getProducts
+      parameters:
+      - description: Zero-based number of the page to obtain
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+        style: form
+      - description: It manages the maximum number of elements inside a response.
+          Maximum can't be more than 100.
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 15
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductArrayMetadataType'
+          description: Successful response - returns an array of `Product` entities
+            with metadata for pagination
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: List all products
+      tags:
+      - Organization
+    post:
+      operationId: postProducts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductType'
+        description: "This method allows to create new `products` which will be available\
+          \ for the organization. \nThe JSON boby could contain the following fields:\n\
+          * name: it contains the name associated to the product\n  that will be created\
+          \ (the field is mandatory).\n* description: it contains the description\
+          \ of the relative\n  product (it is not mandatory).\n\nThe id is read-only\
+          \ field and must not be provided in input. It's generated by Margo system\
+          \ and it's returned in the output.\n\n**Use case:** A company make printers\
+          \ software and it would like to insert this information in in its portfolios\
+          \ in order to indicate to the sales users which product could be sold to\
+          \ the prospect.\nIn this case it is important to create the product `Printers\
+          \ software` in the system. The field description could contain the software\
+          \ version."
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductType'
+          description: Successful response
+        "400":
+          content:
+            application/json:
+              examples:
+                BadRequestError:
+                  value:
+                    code: 400
+                    message: message
+                    description: description
+                    details:
+                    - code: 4001
+                      message: message1
+                      description: description1
+                    - code: 4002
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "409":
+          content:
+            application/json:
+              examples:
+                AlreadyExistsError:
+                  value:
+                    code: 409
+                    message: message
+                    description: description
+                    details:
+                    - code: 4091
+                      message: message1
+                      description: description1
+                    - code: 4092
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item already exists
+      summary: Create product
+      tags:
+      - Organization
+  /portfolios:
+    get:
+      description: The method retrieves the list of created `Portfolio` by the organization.
+        The response could contain also portfolios created by the web users that belong
+        to the organization (based on the authorization).
+      operationId: getPortfolios
+      parameters:
+      - description: Zero-based number of the page to obtain
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+        style: form
+      - description: It manages the maximum number of elements inside a response.
+          Maximum can't be more than 100.
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 15
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioSummaryArrayMetadataType'
+          description: Successful response - returns an array of `Portfolio` entities
+            with metadata for pagination
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: List all portfolios
+      tags:
+      - Portfolios
+    post:
+      operationId: postPortfolios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortfolioCreationType'
+        description: "This method allows to create a `Portfolio`. \n\nThe JSON body\
+          \ could contain the following fields:\n* name: it contains the name of the\
+          \ portfolio (the field must be unique and it's mandatory).\n* customVariables:\
+          \ this array shall contain the information for custom variables present\
+          \ in the portfolio (the field is not mandatory).\n\nInformation for the\
+          \ portfolios' custom variables:\n* There can be at max 6 custom variables\
+          \ inside the portfolio and the number is handled by the `index` item. The\
+          \ values accepted are from 0 to 5. \n* Custom variable `name` must be unique\
+          \ in the portfolio.\n* The `type` must be one of the following: String,\
+          \ Number, Date.\n\nThis method allow only the portfolio creation. The addition\
+          \ of companies is handled by a different method: **POST /portfolios/{portfolioId}/companies**.\n\
+          \n**Use case:** The CRM system needs to create a portfolio in Margo whit\
+          \ the own customer base. It would identifies this portfolio with name OwnCustomerBase\
+          \ and he would to create two custom variables:\n* Customer segment: it describes\
+          \ the customer segment class according to revenue volume.\n* Quantity purchased:\
+          \ it determines the quantity of product sold to the customer."
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioSummaryType'
+          description: Successful response
+        "400":
+          content:
+            application/json:
+              examples:
+                BadRequestError:
+                  value:
+                    code: 400
+                    message: message
+                    description: description
+                    details:
+                    - code: 4001
+                      message: message1
+                      description: description1
+                    - code: 4002
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "409":
+          content:
+            application/json:
+              examples:
+                AlreadyExistsError:
+                  value:
+                    code: 409
+                    message: message
+                    description: description
+                    details:
+                    - code: 4091
+                      message: message1
+                      description: description1
+                    - code: 4092
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item already exists
+      summary: Create portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}:
+    delete:
+      description: Retrieves the values of a `Portfolio` identified by portfolioId
+        and it delete the whole portfolio.
+      operationId: deletePortfolio
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      responses:
+        "204":
+          description: Portfolio succesfully deleted
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+      summary: Delete a portfolio
+      tags:
+      - Portfolios
+    get:
+      description: Retrieves the values of a `Portfolio` identified by portfolioId
+        and it retrieves the details.
+      operationId: getPortfolio
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioType'
+          description: Successful response - returns a single `Portfolio`
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: Get a portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/share:
+    delete:
+      description: Retrieves the values of a `Portfolio` identified by portfolioId
+        and it deletes all its existing sharing with the Web Users organization.
+      operationId: deleteSharingPortfolio
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      responses:
+        "204":
+          description: Portfolio sharing succesfully deleted
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+      summary: Delete Sharing a Portfolio
+      tags:
+      - Portfolios
+    get:
+      description: Retrieves the sharing to Web Users' organization of a `Portfolio`
+        and shows which access type is allow to web users.
+      operationId: portfolioSharingList
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessRightsList'
+          description: Successful response - returns a single `Portfolio`
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: Share a Portfolio
+      tags:
+      - Portfolios
+    post:
+      description: The purpose of this method is to share a `Portfolio` created by
+        API user to the whole Web Users that belongs into offices of own organization.
+      operationId: sharePortfolio
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessRight'
+        description: |-
+          `accessRight` defines which operation can be done by web users for portfolio
+          received. Values can be one of:
+          - **Read**: it doesn’t allow to edit the API portfolio to web users but they can see inside the platform in read only way
+          - **Write**: it allows to see and edit the API’s portfolio to all web users
+      responses:
+        "204":
+          description: Portfolio succesfully shared
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+      summary: Share a Portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/shares/delete:
+    post:
+      description: The purpose of this method is to delete sharing for one or more
+        offices.
+      operationId: portfolioSharesDelete
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfficesList'
+        description: Office ids for which is asking to delete the portfolio share
+      responses:
+        "204":
+          description: Portfolio sharing succesfully deleted
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+      summary: Delete Portfolio shares
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/companies/bulk-add:
+    post:
+      operationId: postAddPortfolioCompanies
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyArrayType'
+        description: |-
+          Add one or more companies to an existing portfolio.
+
+          `companies` list needs to have maximum 100 objects per call and each object belonging to a list must contain the company's information to upload in the portfolio.
+
+          The service is able to upload the headquarter or the branch data. The data upload depends by the values reported in each object:
+          * if the object contains only the **identificationCode** the system upload only the headquarter data.
+          * if the object contains the **identificationCode** and the **companyUnitId** the system upload only the branch data.
+
+          Values reported in the `value` items (customVariable array) shall respect the data type defined in the **POST /portfolios**.
+
+          `margoId` and `isEnriched` are read-only fields and must not be provided in input. `margoId` is generated by Margo system during the company upload in order to identify a company inside portfolio. `isEnriched` indicate if a company is enriched or not.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CompanyResultType'
+                type: array
+          description: Successful response
+        "400":
+          content:
+            application/json:
+              schema:
+                example:
+                - result: Invalid
+                  errors:
+                  - message: margoId not allowed
+                items:
+                  $ref: '#/components/schemas/CompanyResultType'
+                type: array
+          description: Validation response
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+      summary: Add companies to portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/companies/bulk-update:
+    post:
+      operationId: postUpdatePortfolioCompanies
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyUpdateArrayType'
+        description: |-
+          The service updates one or more companies of an existing portfolio. The information that is possible to update are only the portfolio information: companyPortfolioStatus, tags, amount, areaManagerId, salesId, productId and customVariables’ value.
+
+          The key field in order to allow the update of company data in the portfolio is the `margoId` - this information is available for each company belongs to the portfolio using the method **POST /portfolios/{portfolioId}/download** (data packet: **portfolioInfo**).
+
+          `companies` list needs to have maximum 100 objects per call and each object belonging to a list must contain, for each company, at least the fileds: margoId, identificationCode and companyPortfolioStatus.
+
+          `isEnriched` is read-only fields and must not be provided in input. These items are generated by Margo system  and it indicate if a company is enrinched or not.
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CompanyResultType'
+                type: array
+          description: Successful response
+        "400":
+          content:
+            application/json:
+              schema:
+                example:
+                - result: Invalid
+                  errors:
+                  - message: margoId not allowed
+                items:
+                  $ref: '#/components/schemas/CompanyResultType'
+                type: array
+          description: Validation response
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+      summary: Update companies to portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/companies/bulk-delete:
+    post:
+      operationId: postDeletePortfolioCompanies
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyMargoIdArrayType'
+        description: |-
+          Based on portfolioId parameter Margo delete a subset of companies belongs to the related portfolio.
+
+          The json body to provide is an array with `margoId` associated an each company belongs to the portfolio.
+
+          The margoIds are available with the method **POST /portfolios/{portfolioId}/download** (data packet: **portfolioInfo**).
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CompanyResultType'
+                type: array
+          description: Successful response - returns an array of `MargoIds`.
+        "400":
+          content:
+            application/json:
+              examples:
+                BadRequestError:
+                  value:
+                    code: 400
+                    message: message
+                    description: description
+                    details:
+                    - code: 4001
+                      message: message1
+                      description: description1
+                    - code: 4002
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+      summary: Delete companies from portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/download:
+    post:
+      operationId: postPortfolioDownload
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      - description: Set here the language you want in output
+        explode: false
+        in: header
+        name: Accept-Language
+        required: false
+        schema:
+          default: en-GB
+          enum:
+          - en-GB
+          - it-IT
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadType'
+        description: "This method allows to download the business information of all\
+          \ companies content in the portfolio or of a subset of it.\n\nMargo retrives\
+          \ the data based on two values:\n* The parameter `portfolioId`: the guid\
+          \ is generated automatically by the system after the portfolio creation\
+          \ and it identifies uniquely the portfolio in the system. The `portfolioId`\
+          \ of the created portfolios are available using the method **GET /portfolios**.\n\
+          \  \n* The value specified in the object `content` reported in the request\
+          \ body. The key must be one of `dataPacketList` or `marketingList`. The\
+          \ first one is an array and each value must be the dataPacketId  (for more\
+          \ details of the data packet availables go to the page **https://developer-cms.crifnet.com:8080/apis/margo/**).\
+          \ `marketingList` enables the download of the company data with a fixed\
+          \ layout and it must be a string with a specific value (e.g. **marketing**).\n\
+          \nMoreover the method returns the business information for the whole portfolio\
+          \ indicated or for a subset of it.\n          \nMargo retrives data of a\
+          \ subset of whole portfolio throught the query parameters specify inside\
+          \ the request body. There are two type of parameters in the request body:\n\
+          * `filters`: it contains all filter parameters linked to the companies'\
+          \ business information. Parameters are grouped based on the data type: **numericFilters**,\
+          \ **dateFilters**, **booleanFilters**, **stringFilters**, **domainFilters**.\n\
+          * `portfolioFilters`: it contains all portfolio's filter parameters associated\
+          \ to the companies that it contains. Based on the definition in **POST /portfolios**,\
+          \ custom variables are grouped based on data type: **numericFilters**, **dateFilters**,\
+          \ **stringFilters**.\n\nAnother important parameter that handle API's response\
+          \ is **continueToken**: it manages the number of calls based on the total\
+          \ number of companies in the portfolio and the pagination reported in the\
+          \ body of this method. The continueToken is provided after first call by\
+          \ Margo and it must be inserted in the body of next request. Moreover, it\
+          \ must be updated in the request body with the token returned by the previous\
+          \ response as it changes so as to identify each paginated response.\n\n\
+          **Use case**:The CRM system needs to download the data packet **address**\
+          \ for a subset of the whole portfolio and it should consider only the companies\
+          \ localized in the province of Rome and with employees in the range 1-50."
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadResultType'
+          description: Successful response - returns a Guid to use it getting the
+            asyncronous result
+        "400":
+          content:
+            application/json:
+              examples:
+                BadRequestError:
+                  value:
+                    code: 400
+                    message: message
+                    description: description
+                    details:
+                    - code: 4001
+                      message: message1
+                      description: description1
+                    - code: 4002
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+      summary: Download portfolio
+      tags:
+      - Portfolios
+  /portfolios/{portfolioId}/create-similarity:
+    post:
+      description: |-
+        Similarity API provides in output a subset of **filters** parameter identified by the algorithm and that should be used in the method **POST /prospecting/search**.
+
+        The input parameters are:
+        * `portfolioId`
+        * `companyPortfolioStatus`
+
+        If you would like to use this method you should:
+        1. Identify the portfolio on which you would like to generate prospects. For this, you can use the method **GET /portfolios** in order to choose the starting portfolio and, based on you chose, you can find the **portfolioId** parameter.
+        2. Identify companies segment belonging to a portfolio selected. In this case, you can use the **portfolioId** found in the previously step and, using the method **GET /portfolios/{portfolioId}/** you can see how companies are divided by portfolio status. Based on statistics, you can select the *companyPortfolioStatus* parameter.
+
+        Ther response provides two information:
+        * filters: it contains **filters** parameter identified by the algorithm. It should be used in the **POST /prospecting/search**.
+        * totalElements: it's the  total number of companies that satisfy the prospecting query.
+      operationId: postSimilarity
+      parameters:
+      - description: It is a `Portfolio`'s unique identifier. It must contains the
+          portfolio's identifier indicated in  the method **GET /portfolios**.
+        explode: false
+        in: path
+        name: portfolioId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      - description: It indicates one of company portfolio status available in own
+          portfolio.
+        explode: true
+        in: query
+        name: companyPortfolioStatus
+        required: true
+        schema:
+          enum:
+          - Prospect
+          - Lead
+          - Client
+          - Supplier
+          - Competitor
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarityResultType'
+          description: Successful response
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: Generate prospect based on own portfolio
+      tags:
+      - Portfolios
+  /prospecting/search:
+    post:
+      operationId: postSearch
+      parameters:
+      - description: Set here the language you want in output
+        explode: false
+        in: header
+        name: Accept-Language
+        required: false
+        schema:
+          default: en-GB
+          enum:
+          - en-GB
+          - it-IT
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchType'
+        description: "This method allows to search a list of prospect setting a series\
+          \ of filters and it could download companies' data packets.\n\nIt's possible\
+          \ to search companies based on the value reported in the body:\n* `freeText`:\
+          \ search field that enables to find a company by name or identifier.\n*\
+          \ `ignoredPortfolios`: the array contains `portfoloIds` associated by the\
+          \ system to the portfolios (information are available using the method **GET\
+          \ /portfolios**). The method excludes from the response all the companies\
+          \ belong to the portfolios specifiend in the array.\n* `filters`: it contains\
+          \ all filter parameters linked to the companies' business information. Parameters\
+          \ are grouped based on the data type: **numericFilters**, **dateFilters**,\
+          \ **booleanFilters**, **stringFilters**, **domainFilters**.\n\nHow can you\
+          \ perform a search?\n* if you search a specific company (e.g.: CRIF S.p.A.),\
+          \ you can insert in the body **only** the item `freeText`.\n* if you would\
+          \ like to search for a list of companies based on a subset of parameters,\
+          \ it's useful to insert in the body the items `ignoredPortfolios` and `filters`\
+          \ in order to perform the query (`freeText` might not present in the body).\n\
+          \n  In case you are going to use filter parameters provide by **POST /portfolios/{portfolioId}/create-similarity**,\
+          \ you should insert in `filters` the parameters provided by similarity method\
+          \ and `ignoredPortfolios` parameter should contain the **portfolioId** of\
+          \ the starting portfolio. \n\nData reported in the response depends by the\
+          \ presence of `content` item:\n* if the body doesn't contain it, the system\
+          \ provides a subset of information necessary to identify companies provided.\n\
+          * if the item is present, the system provides the data required based on\
+          \ the parameters: `dataPacketList` or `marketingList` (take a look: `content`\
+          \ must contain one of `dataPacketList` or `marketingList`). The first one\
+          \ is an array and each value must be the dataPacketId (for more details\
+          \ of the data packet availables go to the page **https://developer-cms.crifnet.com:8080/apis/margo/**).\
+          \ `marketingList` enables the download of the company data with a fixed\
+          \ layout and it must be a string with a specific value (e.g. **marketing**).\n\
+          \nAn important parameter that handles the API response is the **continueToken**:\
+          \ it manages the number of calls based on the total number of companies\
+          \ searched and the pagination reported in the body of this method. The continueToken\
+          \ is provided after first call by Margo and it must be inserted in the body\
+          \ of next request. Moreover, it must be updated in the request body with\
+          \ the token returned by the previous response as it changes so as to identify\
+          \ each paginated response.\n\nFinally, you could sorting the result by company\
+          \ name, turnover and  employee using the item `sort`. The format to use\
+          \ is `fieldId,(asc|desc)` and the fields are:\n* company name: **companyName**\n\
+          * turnover: **turnover**\n* employees: **employee**\n\nMultiple sort criteria\
+          \ are not supported."
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchDataArrayMetadataType'
+          description: Successful response - returns an array of `Company` entities
+            with metadata for pagination
+        "400":
+          content:
+            application/json:
+              examples:
+                BadRequestError:
+                  value:
+                    code: 400
+                    message: message
+                    description: description
+                    details:
+                    - code: 4001
+                      message: message1
+                      description: description1
+                    - code: 4002
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+      summary: Search companies
+      tags:
+      - Prospecting
+  /offices:
+    get:
+      description: This method retrieves the list of offices and users belonging to
+        the subscription.
+      operationId: getOffices
+      parameters:
+      - description: Zero-based number of the page to obtain
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+        style: form
+      - description: It manages the maximum number of elements inside a response.
+          Maximum can't be more than 100.
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 15
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfficeArrayMetadataType'
+          description: Successful response - returns an array of `Office` entities
+            with metadata for pagination
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: List all offices
+      tags:
+      - Profile
+  /offices/{officeId}/users:
+    get:
+      description: The method returns the list of the users who belong to an office.
+      operationId: getOfficeUsers
+      parameters:
+      - description: Zero-based number of the page to obtain
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          format: int64
+          minimum: 0
+          type: integer
+        style: form
+      - description: It manages the maximum number of elements inside a response.
+          Maximum can't be more than 100.
+        explode: true
+        in: query
+        name: size
+        required: false
+        schema:
+          default: 15
+          format: int64
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: a unique identifier for a `Office`.
+        explode: false
+        in: path
+        name: officeId
+        required: true
+        schema:
+          $ref: '#/components/schemas/IdType'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserArrayMetadataType'
+          description: Successful response - returns an array of `User` entities with
+            metadata for pagination.
+        "401":
+          content:
+            application/json:
+              examples:
+                UnAuthorizedError:
+                  value:
+                    code: 401
+                    message: message
+                    description: description
+                    details:
+                    - code: 4011
+                      message: message1
+                      description: description1
+                    - code: 4012
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: UnAuthorized
+        "404":
+          content:
+            application/json:
+              examples:
+                NotFoundError:
+                  value:
+                    code: 404
+                    message: message
+                    description: description
+                    details:
+                    - code: 4041
+                      message: message1
+                      description: description1
+                    - code: 4042
+                      message: message2
+                      description: description2
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Item not found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseErrorType'
+          description: Generic Error
+      summary: Get users list of the office
+      tags:
+      - Profile
+components:
+  parameters:
+    pageParam:
+      description: Zero-based number of the page to obtain
+      explode: true
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 0
+        format: int64
+        minimum: 0
+        type: integer
+      style: form
+    sizeParam:
+      description: It manages the maximum number of elements inside a response. Maximum
+        can't be more than 100.
+      explode: true
+      in: query
+      name: size
+      required: false
+      schema:
+        default: 15
+        format: int64
+        maximum: 100
+        minimum: 1
+        type: integer
+      style: form
+    domainIdParam:
+      description: the domain type a unique identifier for a `Domain`.
+      explode: false
+      in: path
+      name: domainType
+      required: true
+      schema:
+        type: string
+      style: simple
+    campaignIdParam:
+      description: a unique identifier for a `Campaign`.
+      explode: false
+      in: path
+      name: campaignId
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdType'
+      style: simple
+    portfolioIdParam:
+      description: It is a `Portfolio`'s unique identifier. It must contains the portfolio's
+        identifier indicated in  the method **GET /portfolios**.
+      explode: false
+      in: path
+      name: portfolioId
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdType'
+      style: simple
+    companyPortfolioStatusParam:
+      description: It indicates one of company portfolio status available in own portfolio.
+      explode: true
+      in: query
+      name: companyPortfolioStatus
+      required: true
+      schema:
+        enum:
+        - Prospect
+        - Lead
+        - Client
+        - Supplier
+        - Competitor
+        type: string
+      style: form
+    officeIdParam:
+      description: a unique identifier for a `Office`.
+      explode: false
+      in: path
+      name: officeId
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdType'
+      style: simple
+    languageIdParam:
+      description: Set here the language you want in output
+      explode: false
+      in: header
+      name: Accept-Language
+      required: false
+      schema:
+        default: en-GB
+        enum:
+        - en-GB
+        - it-IT
+        type: string
+      style: simple
+  responses:
+    BadRequestType:
+      content:
+        application/json:
+          examples:
+            BadRequestError:
+              value:
+                code: 400
+                message: message
+                description: description
+                details:
+                - code: 4001
+                  message: message1
+                  description: description1
+                - code: 4002
+                  message: message2
+                  description: description2
+          schema:
+            $ref: '#/components/schemas/ResponseErrorType'
+      description: Bad request
+    NotFoundType:
+      content:
+        application/json:
+          examples:
+            NotFoundError:
+              value:
+                code: 404
+                message: message
+                description: description
+                details:
+                - code: 4041
+                  message: message1
+                  description: description1
+                - code: 4042
+                  message: message2
+                  description: description2
+          schema:
+            $ref: '#/components/schemas/ResponseErrorType'
+      description: Item not found
+    AlreadyExistsType:
+      content:
+        application/json:
+          examples:
+            AlreadyExistsError:
+              value:
+                code: 409
+                message: message
+                description: description
+                details:
+                - code: 4091
+                  message: message1
+                  description: description1
+                - code: 4092
+                  message: message2
+                  description: description2
+          schema:
+            $ref: '#/components/schemas/ResponseErrorType'
+      description: Item already exists
+    UnAuthorizedType:
+      content:
+        application/json:
+          examples:
+            UnAuthorizedError:
+              value:
+                code: 401
+                message: message
+                description: description
+                details:
+                - code: 4011
+                  message: message1
+                  description: description1
+                - code: 4012
+                  message: message2
+                  description: description2
+          schema:
+            $ref: '#/components/schemas/ResponseErrorType'
+      description: UnAuthorized
+    InternalServerErrorType:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseErrorType'
+      description: Generic Error
+  schemas:
+    IdType:
+      format: uuid
+      type: string
+    MetadataType:
+      properties:
+        totalElements:
+          description: Total number of elements the API should return without pagination
+          format: integer
+          type: integer
+        totalPages:
+          description: Total number of pages available `totalPages = ceil (totalElements
+            / size)`
+          format: int64
+          type: integer
+        size:
+          description: maximum number of elements inside a page (like input)
+          format: int64
+          type: integer
+        page:
+          description: page number (like input)
+          format: int64
+          type: integer
+        numberOfElements:
+          description: number of elements in this page `numberOfElements <= size`
+          format: int64
+          type: integer
+      type: object
+    ErrorType:
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        description:
+          type: string
+      type: object
+    FaultType:
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        description:
+          type: string
+        details:
+          items:
+            $ref: '#/components/schemas/ErrorType'
+          type: array
+      type: object
+    ResponseErrorType:
+      properties:
+        fault:
+          $ref: '#/components/schemas/FaultType'
+      type: object
+    DomainsType:
+      description: Domain values list
+      example:
+        type: ateco
+        description: It identifies the Primary ateco code
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      title: Domain
+      type: object
+    DomainType:
+      properties:
+        code:
+          type: string
+        text:
+          type: string
+      type: object
+    DomainArrayType:
+      description: Array of domain values
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DomainType'
+          type: array
+      title: Domain Array
+      type: object
+    DomainArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/DomainArrayType'
+      description: Array of domain values with metadata for pagination
+      example:
+        totalElements: 134
+        totalPages: 7
+        size: 20
+        page: 6
+        numberOfElements: 14
+        content:
+        - code: BO
+          text: Bologna
+      title: Domain Array Metadata
+    ProductType:
+      example:
+        id: d2602dcb-078d-4c4a-ad71-2db4b962a4c1
+        name: Printers software
+        description: v8.2.5
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          description: It contain the product name relative at the product id
+          type: string
+        description:
+          description: It contain the product description relative at the product
+            id
+          type: string
+      type: object
+    ProductArrayType:
+      description: Array of product
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/ProductType'
+          type: array
+      title: Product Array
+      type: object
+    ProductArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/ProductArrayType'
+      description: Array of product with metadata for pagination
+      example:
+        totalElements: 100
+        totalPages: 7
+        size: 15
+        page: 7
+        numberOfElements: 2
+        content:
+        - id: cfa41750-dcbd-4209-91a4-785fc15460e3
+          name: T-shirt
+          description: T-shirt size M color Red
+        - id: 573d96fe-e0ff-4bdb-8236-83b7689f60ba
+          name: Pants
+          description: Pants size L color blu
+      title: Product Array Metadata
+    CustomVariableType:
+      example:
+        index: 0
+        type: String
+      properties:
+        index:
+          description: It identifies the position of the custom variable inside the
+            portfolio. It is mandatory.
+          type: integer
+        name:
+          description: "Using this field during portfolio creation, the system assigns\
+            \ the name to the custom variable."
+          type: string
+        type:
+          description: The item defines the data type of custom variable during portfolio
+            creation.
+          enum:
+          - String
+          - Number
+          - Date
+          type: string
+        value:
+          description: It contains custom variable's value.
+          type: string
+      required:
+      - index
+      type: object
+    AccessRightsList:
+      items:
+        $ref: '#/components/schemas/AccessRight'
+      type: array
+    AccessRight:
+      example:
+        accessRight: Read
+        officeIds:
+        - d069e399-894b-46be-857b-fbccd497d9b3
+        - d069e399-894b-46be-857b-fbccd497d9b3
+      properties:
+        accessRight:
+          enum:
+          - Read
+          - Write
+          type: string
+        officeIds:
+          items:
+            $ref: '#/components/schemas/OfficeIdType'
+          type: array
+      required:
+      - accessRight
+      - officeIds
+      type: object
+    OfficesList:
+      example:
+        officeIds:
+        - d069e399-894b-46be-857b-fbccd497d9b3
+        - d069e399-894b-46be-857b-fbccd497d9b3
+      properties:
+        officeIds:
+          items:
+            $ref: '#/components/schemas/OfficeIdType'
+          type: array
+      required:
+      - officeIds
+      type: object
+    OfficeIds:
+      items:
+        $ref: '#/components/schemas/OfficeIdType'
+      type: array
+    PortfolioCreationType:
+      example:
+        name: OwnCustomerBase
+        customVariables:
+        - index: 0
+          name: Customer segment
+          type: String
+        - index: 1
+          name: Quantity purchase
+          type: Number
+      properties:
+        name:
+          type: string
+        customVariables:
+          items:
+            $ref: '#/components/schemas/CustomVariableType'
+          type: array
+      type: object
+    PortfolioSummaryType:
+      example:
+        id: 00000000-0000-0000-0000-000000000001
+        name: OwnCustomerBase
+        userCode: CC804148
+        totalCompanies: 173
+        isMonitored: false
+        status: Done
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        userCode:
+          type: string
+        totalCompanies:
+          type: integer
+        isMonitored:
+          type: boolean
+        status:
+          enum:
+          - Pending
+          - Created
+          - Deleted
+          - Done
+          - Error
+          type: string
+      type: object
+    PortfolioSummaryArrayType:
+      description: Array of Portfolio summaries
+      properties:
+        portfolios:
+          items:
+            $ref: '#/components/schemas/PortfolioSummaryType'
+          type: array
+      title: Portfolio Summary Array
+      type: object
+    PortfolioSummaryArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/PortfolioSummaryArrayType'
+      description: Portfolio summaries array with metadata for pagination
+      title: Portfolio summaries Array Metadata
+    PortfolioType:
+      example:
+        id: 00000000-0000-0000-0000-000000000001
+        name: OwnCustomerBase
+        userCode: CC804148
+        totalCompanies: 173
+        lastUpdateDate: 2020-12-12
+        isMonitored: false
+        status: Created
+        companiesPortfolioStatus:
+          prospect: 13
+          client: 10
+          supplier: 0
+          lead: 0
+          competitor: 150
+        customVariables:
+        - index: 0
+          name: Customer segment
+          type: String
+        - index: 1
+          name: Quantity purchase
+          type: Number
+      properties:
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        totalCompanies:
+          type: integer
+        userCode:
+          type: string
+        isMonitored:
+          type: boolean
+        lastUpdated:
+          format: date-time
+          type: string
+        status:
+          type: string
+        companiesPortfolioStatus:
+          $ref: '#/components/schemas/PortfolioType_companiesPortfolioStatus'
+        customVariables:
+          items:
+            $ref: '#/components/schemas/CustomVariableType'
+          type: array
+      type: object
+    CompanyMargoIdArrayType:
+      description: Array of Company MargoId
+      example:
+        margoIds:
+        - ITA-ORG_15728950_CLIENT_J95892
+        - ITA-ORG_15728950_CLIENT_J95892
+      properties:
+        margoIds:
+          items:
+            $ref: '#/components/schemas/CompanyMargoIdType'
+          type: array
+      title: Company MargoId Array
+      type: object
+    CompanyMargoIdType:
+      description: The string reported in this item is generated automatically by
+        Margo system and it is the unique code that identifies the company in the
+        portfolio.
+      example: ITA-ORG_15728950_CLIENT_J95892
+      type: string
+    CompanyType:
+      example:
+        margoId: ITA-ORG_15728950_CLIENT_J95892
+        companyUnitId: 00000000-0000-0000-0000-000000000001
+        identificationCode: RBUFNC59R47E2999
+        companyPortfolioStatus: Prospect
+        tags: "tag1, tag2, tag3"
+        amount: 1000
+        areaManagerId: 00000000-0000-0000-0000-000000000002
+        salesId: 00000000-0000-0000-0000-000000000003
+        productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+        isEnriched: false
+        customVariable:
+        - index: 0
+          value: 1250
+        - index: 1
+          value: Forecast
+      properties:
+        margoId:
+          description: The guid reported in this item is generated automatically by
+            Margo system and it is the unique code that identifies the company in
+            the portfolio.
+          type: string
+        companyUnitId:
+          description: |-
+            The guid reported in this item identifies the branche of an headquarter. The companyUnitId is provided by Margo after the search service **POST /prospecting/search**.
+            If the item contains a value, Margo uploads in the portfolio the branch data otherwise the system will upload only the headquarter data (Margo identifies the headquarter data with the value reported in the identificationCode's item).
+          type: string
+        identificationCode:
+          description: "It must be one of: Vat code, Tax code, CRIF Number."
+          type: string
+        companyPortfolioStatus:
+          enum:
+          - Prospect
+          - Client
+          - Lead
+          - Competitor
+          - Supplier
+          type: string
+        tags:
+          description: It's possible to insert one or more tag divided by comma. Max
+            occurrence is 10 values.
+          type: string
+        amount:
+          description: It identifies the amount billed to the customer.
+          type: number
+        areaManagerId:
+          description: It must be an Area manager user id defined for the organization.
+          type: string
+        salesId:
+          description: It must be a Sales user id defined for the organization.
+          type: string
+        productId:
+          description: It must be a Product Id defined for the organization.
+          type: string
+        isEnriched:
+          description: It indicates if a company has been enriched from the web users
+          type: boolean
+        customVariables:
+          items:
+            $ref: '#/components/schemas/CustomVariableType'
+          type: array
+      required:
+      - companyPortfolioStatus
+      - identificationCode
+      type: object
+    CompanyUpdateType:
+      example:
+        margoId: ITA-ORG_15728950_CLIENT_J95892
+        companyPortfolioStatus: Prospect
+        tags: "tag1, tag2, tag3"
+        amount: 1000
+        areaManagerId: 00000000-0000-0000-0000-000000000002
+        salesId: 00000000-0000-0000-0000-000000000003
+        productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+        isEnriched: false
+        customVariable:
+        - index: 0
+          value: 1250
+        - index: 1
+          value: Forecast
+      properties:
+        margoId:
+          description: The guid reported in this item is generated automatically by
+            Margo system and it is the unique code that identifies the company in
+            the portfolio.
+          type: string
+        companyPortfolioStatus:
+          enum:
+          - Prospect
+          - Client
+          - Lead
+          - Competitor
+          - Supplier
+          type: string
+        tags:
+          description: It's possible to insert one or more tag divided by comma. Max
+            occurrence is 10 values.
+          type: string
+        amount:
+          description: It identifies the amount billed to the customer.
+          type: number
+        areaManagerId:
+          description: It must be an Area manager user id defined for the organization.
+          type: string
+        salesId:
+          description: It must be a Sales user id defined for the organization.
+          type: string
+        productId:
+          description: It must be a Product Id defined for the organization.
+          type: string
+        isEnriched:
+          description: It indicates if a company has been enriched from the web users
+          type: boolean
+        customVariables:
+          items:
+            $ref: '#/components/schemas/CustomVariableType'
+          type: array
+      required:
+      - margoId
+      type: object
+    CompanyResultType:
+      example:
+        margoId: ITA-ORG_15728950_CLIENT_J95892
+        result: Success
+      properties:
+        margoId:
+          description: The guid reported in this item is generated automatically by
+            Margo system and it is the unique code that identifies the company in
+            the portfolio.
+          type: string
+        result:
+          description: "The value reported indicates if the system accepted the company\
+            \ information.\n* Success: ok\n* Ceased: company is ceased and the system\
+            \ rejected it\n* Unmatched: company is not present\n* Invalid: company\
+            \ is not valid\n* Validated: company is formally correct\n* Error:  the\
+            \ company information contains some error. The error \ndetails are reported\
+            \ in the `errors` item."
+          enum:
+          - Success
+          - Ceased
+          - Unmatched
+          - Invalid
+          - Valid
+          - Error
+          type: string
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorType'
+          type: array
+      required:
+      - margoId
+      - result
+      type: object
+    CompanyArrayType:
+      description: Array of Companies
+      example:
+        companies:
+        - margoId: ITA-ORG_15728950_CLIENT_J95892
+          companyUnitId: 00000000-0000-0000-0000-000000000001
+          identificationCode: RBUFNC59R47E2999
+          companyPortfolioStatus: Prospect
+          tags: "tag1, tag2, tag3"
+          amount: 1000
+          areaManagerId: 00000000-0000-0000-0000-000000000002
+          salesId: 00000000-0000-0000-0000-000000000003
+          productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+          isEnriched: false
+          customVariable:
+          - index: 0
+            value: 1250
+          - index: 1
+            value: Forecast
+        - margoId: ITA-ORG_15728950_CLIENT_J95892
+          companyUnitId: 00000000-0000-0000-0000-000000000001
+          identificationCode: RBUFNC59R47E2999
+          companyPortfolioStatus: Prospect
+          tags: "tag1, tag2, tag3"
+          amount: 1000
+          areaManagerId: 00000000-0000-0000-0000-000000000002
+          salesId: 00000000-0000-0000-0000-000000000003
+          productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+          isEnriched: false
+          customVariable:
+          - index: 0
+            value: 1250
+          - index: 1
+            value: Forecast
+      properties:
+        companies:
+          items:
+            $ref: '#/components/schemas/CompanyType'
+          type: array
+      title: Company Array
+      type: object
+    CompanyUpdateArrayType:
+      description: Array of Companies for the update
+      example:
+        companies:
+        - margoId: ITA-ORG_15728950_CLIENT_J95892
+          companyPortfolioStatus: Prospect
+          tags: "tag1, tag2, tag3"
+          amount: 1000
+          areaManagerId: 00000000-0000-0000-0000-000000000002
+          salesId: 00000000-0000-0000-0000-000000000003
+          productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+          isEnriched: false
+          customVariable:
+          - index: 0
+            value: 1250
+          - index: 1
+            value: Forecast
+        - margoId: ITA-ORG_15728950_CLIENT_J95892
+          companyPortfolioStatus: Prospect
+          tags: "tag1, tag2, tag3"
+          amount: 1000
+          areaManagerId: 00000000-0000-0000-0000-000000000002
+          salesId: 00000000-0000-0000-0000-000000000003
+          productId: cfa41750-dcbd-4209-91a4-785fc15460e3
+          isEnriched: false
+          customVariable:
+          - index: 0
+            value: 1250
+          - index: 1
+            value: Forecast
+      properties:
+        companies:
+          items:
+            $ref: '#/components/schemas/CompanyUpdateType'
+          type: array
+      title: Company Array
+      type: object
+    UserType:
+      example:
+        id: 00000000-0000-0000-0000-000000000001
+        code: CC804148
+        firstName: Simone
+        lastName: Bianchi
+        type: AreaManager
+        language: it-IT
+        distinguishName: "Org=878328248,Branch=878500551,User=CC801260"
+      properties:
+        id:
+          format: uuid
+          type: string
+        code:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        type:
+          description: This item identifies the user's role in the hierarchy.
+          enum:
+          - Supervisor
+          - AreaManager
+          - Sales
+          type: string
+        language:
+          type: string
+        distinguishName:
+          description: It contains the position of the user inside the subscription
+            hierarchy
+          type: string
+      type: object
+    UserArrayType:
+      description: Array of User
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/UserType'
+          type: array
+      title: User Array
+      type: object
+    UserArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/UserArrayType'
+      description: Office array with metadata for pagination
+      title: Office Array Metadata
+    OfficeIdType:
+      description: The string reported in this item is provided by Margo system (GET
+        /offices) and it identifies the office inside own subscription.
+      example: d069e399-894b-46be-857b-fbccd497d9b3
+      type: string
+    OfficeType:
+      example:
+        id: d069e399-894b-46be-857b-fbccd497d9b3
+        code: 1234567891_1
+        name: U202007281457
+        users:
+        - id: 00000000-0000-0000-0000-000000000001
+          code: CC804148
+          firstName: Simone
+          lastName: Bianchi
+          type: AreaManager
+          language: it-IT
+          distinguishName: "Org=878328248,Branch=878500551,User=CC801260"
+      properties:
+        id:
+          format: uuid
+          type: string
+        code:
+          description: It's the office's code
+          type: string
+        name:
+          description: It's the office's name
+          type: string
+        users:
+          items:
+            $ref: '#/components/schemas/UserType'
+          type: array
+      type: object
+    OfficeArrayType:
+      description: Array of Office
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/OfficeType'
+          type: array
+      title: Office Array
+      type: object
+    OfficeArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/OfficeArrayType'
+      description: Office array with metadata for pagination
+      title: Office Array Metadata
+    NumericFilterType:
+      properties:
+        min:
+          type: number
+        max:
+          type: number
+      title: Numeric filter
+      type: object
+    DateFilterType:
+      properties:
+        min:
+          format: date-time
+          type: string
+        max:
+          format: date-time
+          type: string
+      title: Date Filter
+      type: object
+    FiltersType:
+      description: |-
+        It must contain all filter parameters linked to the companies' business
+        information.
+
+        All filter parameters are available to the following page: https://developer.crif.com/apis/margo/.
+      example:
+        booleanfilters:
+        - filterId: hasWebsite
+          value: true
+        - filterId: hasWebsite
+          value: true
+        numericfilters:
+        - filterId: employees
+          value:
+            min: 1
+            max: 50
+        - filterId: employees
+          value:
+            min: 1
+            max: 50
+        stringfilters:
+        - filterId: companyName
+          values:
+          - Crif s.p.a.
+          - CRIBIS
+        - filterId: companyName
+          values:
+          - Crif s.p.a.
+          - CRIBIS
+        domainfilters:
+        - filterId: province
+          codes:
+          - MI
+          - RN
+          - TO
+        - filterId: province
+          codes:
+          - MI
+          - RN
+          - TO
+        datefilters:
+        - filterId: foundingDate
+          value:
+            min: 2000-01-01
+            max: 2000-12-31
+        - filterId: foundingDate
+          value:
+            min: 2000-01-01
+            max: 2000-12-31
+      properties:
+        numericfilters:
+          description: |-
+            The array contains all fields with data type **numeric**.
+
+            The object must have the following structure:
+            * filterId: it identifies the name of the field used as a filter
+            * properties: this object have to contain the range of value to be filtered.
+          items:
+            $ref: '#/components/schemas/FiltersType_numericfilters_inner'
+          type: array
+        datefilters:
+          description: |-
+            The array contains all fields with data type ***date***.
+
+            The object must have the following structure:
+            * filterId: it identifies the name of the field used as a filter
+            * properties: this object have to contain the range of date to be filtered.
+          items:
+            $ref: '#/components/schemas/FiltersType_datefilters_inner'
+          type: array
+        booleanfilters:
+          description: |-
+            The array contains all fields with data type ***boolean***.
+
+            The object must have the following structure:
+            * filterId: it identifies the name of the field used as a filter
+            * value: the field have to contain a boolean value (true or false).
+          items:
+            $ref: '#/components/schemas/FiltersType_booleanfilters_inner'
+          type: array
+        stringfilters:
+          description: |-
+            The array contains all fields with data type ***string***.
+
+            The object must have the following structure:
+            * filterId: it identifies the name of the field used as a filter
+            * value: the field have to contain a label.
+          items:
+            $ref: '#/components/schemas/FiltersType_stringfilters_inner'
+          type: array
+        domainfilters:
+          description: |-
+            The array contains all fields with data type ***domain***.
+
+            The object must have the following structure:
+            * filterId: it identifies the name of the field used as a filter
+            * codes: the field have to contain a label.
+          items:
+            $ref: '#/components/schemas/FiltersType_domainfilters_inner'
+          type: array
+      type: object
+    CustomVariablesFiltersType:
+      description: |-
+        One portfolio's feature are the custom variables and their data type could be: numeric, date, boolean, string and domain.
+
+        Like `filters` object, also `customVariablesFilters` object contains a key for each data type.
+      example:
+        booleanfilters:
+        - variableIndex: 2
+          value: true
+        - variableIndex: 2
+          value: true
+        numericfilters:
+        - variableIndex: 0
+          value:
+            min: 10
+            max: 20
+        - variableIndex: 0
+          value:
+            min: 10
+            max: 20
+        stringfilters:
+        - variableIndex: 3
+          values:
+          - Client
+        - variableIndex: 3
+          values:
+          - Client
+        datefilters:
+        - variableIndex: 1
+          value:
+            min: 2000-10-31
+            max: 2000-11-30
+        - variableIndex: 1
+          value:
+            min: 2000-10-31
+            max: 2000-11-30
+      properties:
+        numericfilters:
+          description: |-
+            The array contains the custom variable with data type **numeric**.
+
+            The object must have the following structure:
+            * variableIndex: it identifies the index associated at custom variable
+            * value: this object have to contain the range of value to be filtered.
+          items:
+            $ref: '#/components/schemas/CustomVariablesFiltersType_numericfilters_inner'
+          type: array
+        datefilters:
+          description: |-
+            The array contains the custom variable with data type **date**.
+
+            The object must have the following structure:
+            * variableIndex: it identifies the index associated at custom variable
+            * value: this object have to contain the range of value to be filtered.
+          items:
+            $ref: '#/components/schemas/CustomVariablesFiltersType_datefilters_inner'
+          type: array
+        booleanfilters:
+          description: |-
+            The array contains all fields with data type ***boolean***.
+
+            The object must have the following structure:
+            * variableIndex: it identifies the index associated at custom variable
+            * value: the field have to contain a boolean value (true or false).
+          items:
+            $ref: '#/components/schemas/CustomVariablesFiltersType_booleanfilters_inner'
+          type: array
+        stringfilters:
+          description: |-
+            The array contains all fields with data type ***string***.
+
+            The object must have the following structure:
+            * variableIndex: it identifies the index associated at custom variable
+            * value: the field have to contain a label.
+          items:
+            $ref: '#/components/schemas/CustomVariablesFiltersType_stringfilters_inner'
+          type: array
+      type: object
+    MarketingListType:
+      properties:
+        marketingList:
+          enum:
+          - marketing
+          type: string
+      type: object
+    DataPacketArrayType:
+      properties:
+        dataPacketList:
+          items:
+            type: string
+          type: array
+      type: object
+    PortfolioFiltersType:
+      description: |-
+        The portfolioFilters contains all portfolio's filter parameters associated to the companies that it contains.
+
+        Each key in the object identify the fields created using the method **POST /portfolios/{portfolioId}/companies/**.
+      example:
+        areaManagers:
+        - 00000000-0000-0000-0000-000000000001
+        - 00000000-0000-0000-0000-000000000002
+        amount:
+          min: 150
+          max: 2000000
+        customVariablesFilters:
+          booleanfilters:
+          - variableIndex: 2
+            value: true
+          - variableIndex: 2
+            value: true
+          numericfilters:
+          - variableIndex: 0
+            value:
+              min: 10
+              max: 20
+          - variableIndex: 0
+            value:
+              min: 10
+              max: 20
+          stringfilters:
+          - variableIndex: 3
+            values:
+            - Client
+          - variableIndex: 3
+            values:
+            - Client
+          datefilters:
+          - variableIndex: 1
+            value:
+              min: 2000-10-31
+              max: 2000-11-30
+          - variableIndex: 1
+            value:
+              min: 2000-10-31
+              max: 2000-11-30
+        sales:
+        - 00000000-0000-0000-0000-000000000003
+        - 00000000-0000-0000-0000-000000000004
+        products:
+        - 573d96fe-e0ff-4bdb-8236-83b7689f60ba
+        tags:
+        - tag1
+      properties:
+        amount:
+          $ref: '#/components/schemas/PortfolioFiltersType_amount'
+        areaManagers:
+          example:
+          - 00000000-0000-0000-0000-000000000001
+          - 00000000-0000-0000-0000-000000000002
+          items:
+            type: string
+          type: array
+        sales:
+          example:
+          - 00000000-0000-0000-0000-000000000003
+          - 00000000-0000-0000-0000-000000000004
+          items:
+            type: string
+          type: array
+        products:
+          example:
+          - 573d96fe-e0ff-4bdb-8236-83b7689f60ba
+          items:
+            type: string
+          type: array
+        tags:
+          example:
+          - tag1
+          items:
+            type: string
+          type: array
+        customVariablesFilters:
+          $ref: '#/components/schemas/CustomVariablesFiltersType'
+      type: object
+    DownloadType:
+      description: It defines the ouput requested in term of what is the marketing
+        list  or data packets.
+      example:
+        portfolioFilters:
+          areaManagers:
+          - 00000000-0000-0000-0000-000000000001
+          - 00000000-0000-0000-0000-000000000002
+          amount:
+            min: 150
+            max: 2000000
+          customVariablesFilters:
+            booleanfilters:
+            - variableIndex: 2
+              value: true
+            - variableIndex: 2
+              value: true
+            numericfilters:
+            - variableIndex: 0
+              value:
+                min: 10
+                max: 20
+            - variableIndex: 0
+              value:
+                min: 10
+                max: 20
+            stringfilters:
+            - variableIndex: 3
+              values:
+              - Client
+            - variableIndex: 3
+              values:
+              - Client
+            datefilters:
+            - variableIndex: 1
+              value:
+                min: 2000-10-31
+                max: 2000-11-30
+            - variableIndex: 1
+              value:
+                min: 2000-10-31
+                max: 2000-11-30
+          sales:
+          - 00000000-0000-0000-0000-000000000003
+          - 00000000-0000-0000-0000-000000000004
+          products:
+          - 573d96fe-e0ff-4bdb-8236-83b7689f60ba
+          tags:
+          - tag1
+        size: 10
+        continueToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoiNSIsIm9yZ0lkIjoiZGI4NDVjM2ItMzg3MC00MWIxLThlNjYtNzA0YjU5MWMyNTE2Iiwib24iOiJOT0NGX01BUkdPIiwib3VkbiI6Ik9yZz04NzgzMjgyNDYsQnJhbmNoPTg3ODUwMDU0OSxVc2VyPUNDODAxNDI1IiwiY291bnRyeSI6Iml0YV9xYSIsInVuIjoiQ0M4MDE0MjUiLCJ1c2VySWQiOiI4ZTBhZGExZS1mZjBkLTRkMmUtOGY3ZS0yYTljZWUxNTMyYjkiLCJzaWQiOiI3MmU2Njc0OS0xM2E4LTQ0Y2UtODFiNy0wZWQyMjY1ZDM1ZTciLCJtc2EiOiJUcnVlIiwidXNlcnR5cGUiOiJTdXBlcnZpc29yIiwiYXVkbiI6IkVTPTEwMzgsRFM9MTAzOCxTQj04NzgzMjgyNDYsT0Y9ODc4NTAwNTQ5LFU9Q0M4MDE0MjUiLCJjaGFubmVsIjoiQXBpIiwiYWRtaW4iOiJGYWxzZSIsImV4cCI6MTYwNjIyOTQwMSwiaXNzIjoiQ0MuQnVzaW5lc3MuQXV0aC5XZWJBcGkuQnJva2VyIiwiYXVkIjoiV1NhYVVzZXJBdWRpZW5jZSJ9.6lEFkTk--yGMLWP9c50PN4VKPEU1Av_3bN-VeXRGXWM
+        filters:
+          booleanfilters:
+          - filterId: hasWebsite
+            value: true
+          - filterId: hasWebsite
+            value: true
+          numericfilters:
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          stringfilters:
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          domainfilters:
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          datefilters:
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+        content: null
+      properties:
+        size:
+          description: Zero-based number of the page to obtain
+          example: 10
+          maximum: 100
+          type: number
+        continueToken:
+          description: It manages the number of calls and it governs pagination. continueToken
+            is provided after first call by Margo and after it must be insert in the
+            body. The continueToken changes after each call and it must refresh in
+            the body.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoiNSIsIm9yZ0lkIjoiZGI4NDVjM2ItMzg3MC00MWIxLThlNjYtNzA0YjU5MWMyNTE2Iiwib24iOiJOT0NGX01BUkdPIiwib3VkbiI6Ik9yZz04NzgzMjgyNDYsQnJhbmNoPTg3ODUwMDU0OSxVc2VyPUNDODAxNDI1IiwiY291bnRyeSI6Iml0YV9xYSIsInVuIjoiQ0M4MDE0MjUiLCJ1c2VySWQiOiI4ZTBhZGExZS1mZjBkLTRkMmUtOGY3ZS0yYTljZWUxNTMyYjkiLCJzaWQiOiI3MmU2Njc0OS0xM2E4LTQ0Y2UtODFiNy0wZWQyMjY1ZDM1ZTciLCJtc2EiOiJUcnVlIiwidXNlcnR5cGUiOiJTdXBlcnZpc29yIiwiYXVkbiI6IkVTPTEwMzgsRFM9MTAzOCxTQj04NzgzMjgyNDYsT0Y9ODc4NTAwNTQ5LFU9Q0M4MDE0MjUiLCJjaGFubmVsIjoiQXBpIiwiYWRtaW4iOiJGYWxzZSIsImV4cCI6MTYwNjIyOTQwMSwiaXNzIjoiQ0MuQnVzaW5lc3MuQXV0aC5XZWJBcGkuQnJva2VyIiwiYXVkIjoiV1NhYVVzZXJBdWRpZW5jZSJ9.6lEFkTk--yGMLWP9c50PN4VKPEU1Av_3bN-VeXRGXWM
+          type: string
+        filters:
+          $ref: '#/components/schemas/FiltersType'
+        portfolioFilters:
+          $ref: '#/components/schemas/PortfolioFiltersType'
+        content:
+          $ref: '#/components/schemas/DownloadType_content'
+      required:
+      - content
+      title: Requested output definition
+      type: object
+    SearchType:
+      example:
+        size: 50
+        ignoredPortfolios:
+        - null
+        - null
+        continueToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoiNSIsIm9yZ0lkIjoiZGI4NDVjM2ItMzg3MC00MWIxLThlNjYtNzA0YjU5MWMyNTE2Iiwib24iOiJOT0NGX01BUkdPIiwib3VkbiI6Ik9yZz04NzgzMjgyNDYsQnJhbmNoPTg3ODUwMDU0OSxVc2VyPUNDODAxNDI1IiwiY291bnRyeSI6Iml0YV9xYSIsInVuIjoiQ0M4MDE0MjUiLCJ1c2VySWQiOiI4ZTBhZGExZS1mZjBkLTRkMmUtOGY3ZS0yYTljZWUxNTMyYjkiLCJzaWQiOiI3MmU2Njc0OS0xM2E4LTQ0Y2UtODFiNy0wZWQyMjY1ZDM1ZTciLCJtc2EiOiJUcnVlIiwidXNlcnR5cGUiOiJTdXBlcnZpc29yIiwiYXVkbiI6IkVTPTEwMzgsRFM9MTAzOCxTQj04NzgzMjgyNDYsT0Y9ODc4NTAwNTQ5LFU9Q0M4MDE0MjUiLCJjaGFubmVsIjoiQXBpIiwiYWRtaW4iOiJGYWxzZSIsImV4cCI6MTYwNjIyOTQwMSwiaXNzIjoiQ0MuQnVzaW5lc3MuQXV0aC5XZWJBcGkuQnJva2VyIiwiYXVkIjoiV1NhYVVzZXJBdWRpZW5jZSJ9.6lEFkTk--yGMLWP9c50PN4VKPEU1Av_3bN-VeXRGXWM
+        freeText: CRIF S.p.A.
+        filters:
+          booleanfilters:
+          - filterId: hasWebsite
+            value: true
+          - filterId: hasWebsite
+            value: true
+          numericfilters:
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          stringfilters:
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          domainfilters:
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          datefilters:
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+        sort: "turnover,DESC"
+        content:
+          marketingList: marketing
+      properties:
+        freeText:
+          example: CRIF S.p.A.
+          type: string
+        ignoredPortfolios:
+          items:
+            $ref: '#/components/schemas/IdType'
+          type: array
+        filters:
+          $ref: '#/components/schemas/FiltersType'
+        content:
+          $ref: '#/components/schemas/SearchType_content'
+        sort:
+          description: "It defines the output sorting. Must be either ASC or DESC\
+            \ and the format must be: `fieldId,asc` or `fieldId,desc` where fieldId\
+            \ identifies the field for sorting."
+          example: "turnover,DESC"
+          type: string
+        continueToken:
+          description: It manages the number of calls and it governs pagination. continueToken
+            is provided after first call by Margo and after it must be insert in the
+            body. The continueToken changes after each call and it must refresh in
+            the body.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoiNSIsIm9yZ0lkIjoiZGI4NDVjM2ItMzg3MC00MWIxLThlNjYtNzA0YjU5MWMyNTE2Iiwib24iOiJOT0NGX01BUkdPIiwib3VkbiI6Ik9yZz04NzgzMjgyNDYsQnJhbmNoPTg3ODUwMDU0OSxVc2VyPUNDODAxNDI1IiwiY291bnRyeSI6Iml0YV9xYSIsInVuIjoiQ0M4MDE0MjUiLCJ1c2VySWQiOiI4ZTBhZGExZS1mZjBkLTRkMmUtOGY3ZS0yYTljZWUxNTMyYjkiLCJzaWQiOiI3MmU2Njc0OS0xM2E4LTQ0Y2UtODFiNy0wZWQyMjY1ZDM1ZTciLCJtc2EiOiJUcnVlIiwidXNlcnR5cGUiOiJTdXBlcnZpc29yIiwiYXVkbiI6IkVTPTEwMzgsRFM9MTAzOCxTQj04NzgzMjgyNDYsT0Y9ODc4NTAwNTQ5LFU9Q0M4MDE0MjUiLCJjaGFubmVsIjoiQXBpIiwiYWRtaW4iOiJGYWxzZSIsImV4cCI6MTYwNjIyOTQwMSwiaXNzIjoiQ0MuQnVzaW5lc3MuQXV0aC5XZWJBcGkuQnJva2VyIiwiYXVkIjoiV1NhYVVzZXJBdWRpZW5jZSJ9.6lEFkTk--yGMLWP9c50PN4VKPEU1Av_3bN-VeXRGXWM
+          type: string
+        size:
+          description: Zero-based number of the page to obtain. It must be higher
+            than 0 and ≤ than 100
+          example: 50
+          maximum: 100
+          type: number
+      type: object
+    SearchDataArrayType:
+      description: Search Data array
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType'
+          type: array
+      title: Search Data Array
+    SearchDataArrayMetadataType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/SearchDataArrayType'
+      description: Search Data array with metadata for pagination
+      title: Search Data Array Metadata
+    SearchCompanyDataType:
+      properties:
+        identificationCode:
+          example: "2083271201"
+          type: string
+        crifNumber:
+          example: ITDD03050AS9999
+          type: string
+        companyUnitId:
+          example: b7678c67-9cae-40b6-b793-eee81c8cfd30
+          type: string
+        portfolioAssociated:
+          items:
+            example: "326999e0-abed-46ef-83c2-f1930109074b, 326999e0-abed-46ef-83c2-999999999999"
+            type: string
+          type: array
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        town:
+          example: BOLOGNA
+          type: string
+        ateco:
+          $ref: '#/components/schemas/SearchCompanyDataType_ateco'
+        officeType:
+          $ref: '#/components/schemas/SearchCompanyDataType_officeType'
+        companyDetails:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyDetails'
+        legalForm:
+          $ref: '#/components/schemas/SearchCompanyDataType_legalForm'
+        companyStatus:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyStatus'
+        companyDates:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyDates'
+        address:
+          $ref: '#/components/schemas/SearchCompanyDataType_address'
+        istatTownCode:
+          $ref: '#/components/schemas/SearchCompanyDataType_istatTownCode'
+        geoCoordinates:
+          $ref: '#/components/schemas/SearchCompanyDataType_geoCoordinates'
+        marketable:
+          $ref: '#/components/schemas/SearchCompanyDataType_marketable'
+        branches:
+          $ref: '#/components/schemas/SearchCompanyDataType_branches'
+        atecoClassification:
+          $ref: '#/components/schemas/SearchCompanyDataType_atecoClassification'
+        internationalClassification:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalClassification'
+        ecofin:
+          $ref: '#/components/schemas/SearchCompanyDataType_ecofin'
+        operatingResults:
+          $ref: '#/components/schemas/SearchCompanyDataType_operatingResults'
+        employees:
+          $ref: '#/components/schemas/SearchCompanyDataType_employees'
+        employeesStatistic:
+          $ref: '#/components/schemas/SearchCompanyDataType_employeesStatistic'
+        mail:
+          $ref: '#/components/schemas/SearchCompanyDataType_mail'
+        pec:
+          example: info@crif.com
+          type: string
+        contacts:
+          $ref: '#/components/schemas/SearchCompanyDataType_contacts'
+        webAndSocial:
+          $ref: '#/components/schemas/SearchCompanyDataType_webAndSocial'
+        stateOwned:
+          $ref: '#/components/schemas/SearchCompanyDataType_stateOwned'
+        stateOwnedTelco:
+          $ref: '#/components/schemas/SearchCompanyDataType_stateOwnedTelco'
+        publicTenders:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_publicTenders_inner'
+          type: array
+        foreignTrade:
+          $ref: '#/components/schemas/SearchCompanyDataType_foreignTrade'
+        innovativeSmeAndSu:
+          $ref: '#/components/schemas/SearchCompanyDataType_innovativeSmeAndSu'
+        managers:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_managers_inner'
+          type: array
+        shareholdersInfo:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_shareholdersInfo_inner'
+          type: array
+        corporateGroups:
+          $ref: '#/components/schemas/SearchCompanyDataType_corporateGroups'
+        subsidiaries:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_subsidiaries_inner'
+          type: array
+        affiliateCompanies:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_affiliateCompanies_inner'
+          type: array
+        artisanBusinessRegistry:
+          $ref: '#/components/schemas/SearchCompanyDataType_artisanBusinessRegistry'
+        soaCertification:
+          $ref: '#/components/schemas/SearchCompanyDataType_soaCertification'
+        isoCertifications:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_isoCertifications_inner'
+          type: array
+        financialCycle:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialCycle'
+        coverageRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_coverageRatios'
+        efficiency:
+          $ref: '#/components/schemas/SearchCompanyDataType_efficiency'
+        leverageRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_leverageRatios'
+        liquidityRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_liquidityRatios'
+        profitability:
+          $ref: '#/components/schemas/SearchCompanyDataType_profitability'
+        financialBurden:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialBurden'
+        indebtedness:
+          $ref: '#/components/schemas/SearchCompanyDataType_indebtedness'
+        financialStability:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialStability'
+        structureRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_structureRatios'
+        development:
+          $ref: '#/components/schemas/SearchCompanyDataType_development'
+        financialStatementKpi:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialStatementKpi'
+        telcoAnalytics:
+          $ref: '#/components/schemas/SearchCompanyDataType_telcoAnalytics'
+        seasonality:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality'
+        creditNeeds:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds'
+        cribisDnBRating:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisDnBRating'
+        financialStrenght:
+          example: "80"
+          type: string
+        failureScore:
+          example: 5
+          type: number
+        cribisDnBPaydex:
+          example: 5
+          type: number
+        delinquencyScore:
+          example: 5
+          type: number
+        cribisDnBCommercialCreditAppraisal:
+          example: 5
+          type: number
+        itpRisk:
+          example: 5
+          type: number
+        governanceRiskIndex:
+          $ref: '#/components/schemas/SearchCompanyDataType_governanceRiskIndex'
+        crifBusinessIndex:
+          $ref: '#/components/schemas/SearchCompanyDataType_crifBusinessIndex'
+        industryRating:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisDnBRating'
+        delinquencySectorRating:
+          example: 1
+          type: number
+        industryFailureScore:
+          example: 1
+          type: number
+        industryPaydex:
+          example: 1
+          type: number
+        cribisScoreStateOwned:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisScoreStateOwned'
+        financialEconomicScore:
+          example: 80
+          type: number
+        territorialScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_territorialScore'
+        supplierScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_supplierScore'
+        utilities:
+          $ref: '#/components/schemas/SearchCompanyDataType_utilities'
+        retailAnalytics:
+          $ref: '#/components/schemas/SearchCompanyDataType_retailAnalytics'
+        internazionalizationScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_internazionalizationScore'
+        digitalAttitudeScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_digitalAttitudeScore'
+        innovationScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_innovationScore'
+        estimatedTurnover:
+          example: 1000000
+          type: number
+        companyIdentification:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyIdentification'
+        internationalIdentification:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalIdentification'
+        affidabilityScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_affidabilityScore'
+        semanticCluster:
+          $ref: '#/components/schemas/SearchCompanyDataType_semanticCluster'
+        assetsAggregateValues:
+          example:
+          - code: IIC001
+            value: 4914222
+          - code: IIC039
+            value: 1309088
+          - code: IIC071
+            value: 5859484
+          - code: IIC072
+            value: 2974359
+          - code: IIC073
+            value: 413563
+          - code: IIC074
+            value: 1500483
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        creditsToShareholders:
+          example:
+          - code: IIC193
+            value: 14814
+          - code: IIC002
+            value: 6836099
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        intangibleFixedAssets:
+          example:
+          - code: IIC011
+            value: 5270208
+          - code: IIC003
+            value: 2518949
+          - code: IIC004
+            value: 9042727
+          - code: IIC005
+            value: 1445431
+          - code: IIC006
+            value: 1355410
+          - code: IIC007
+            value: 9167285
+          - code: IIC008
+            value: 9429231
+          - code: IIC009
+            value: 2298581
+          - code: IIC010
+            value: 8544026
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        tangibleFixedAssets:
+          example:
+          - code: IIC018
+            value: 131570
+          - code: IIC012
+            value: 3522262
+          - code: IIC013
+            value: 2222889
+          - code: IIC014
+            value: 586379
+          - code: IIC015
+            value: 1010440
+          - code: IIC016
+            value: 1565918
+          - code: IIC017
+            value: 5015716
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        financialFixedAssets:
+          example:
+          - code: IIC038
+            value: 7082928
+          - code: IIC032
+            value: 4758520
+          - code: IIC033
+            value: 3776077
+          - code: IIC023
+            value: 8356698
+          - code: IIC019
+            value: 3173583
+          - code: IIC020
+            value: 5196311
+          - code: IIC021
+            value: 5814149
+          - code: IIC194
+            value: 3097232
+          - code: IIC022
+            value: 5605871
+          - code: IIC034
+            value: 2427155
+          - code: IIC024
+            value: 4443039
+          - code: IIC025
+            value: 5529022
+          - code: IIC316
+            value: 3064496
+          - code: IIC026
+            value: 7687346
+          - code: IIC027
+            value: 6037262
+          - code: IIC317
+            value: 917079
+          - code: IIC028
+            value: 4576271
+          - code: IIC029
+            value: 4424968
+          - code: IIC318
+            value: 1127265
+          - code: IIC195
+            value: 9890139
+          - code: IIC196
+            value: 9077834
+          - code: IIC319
+            value: 9796719
+          - code: IIC030
+            value: 6114959
+          - code: IIC031
+            value: 2341462
+          - code: IIC320
+            value: 1503019
+          - code: IIC035
+            value: 6553122
+          - code: IIC036
+            value: 842655
+          - code: IIC037
+            value: 1954924
+          - code: IIC197
+            value: 8772112
+          - code: IIC344
+            value: 1301542
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        inventory:
+          example:
+          - code: IIC045
+            value: 8905832
+          - code: IIC040
+            value: 6946609
+          - code: IIC041
+            value: 6148562
+          - code: IIC042
+            value: 503363
+          - code: IIC043
+            value: 8145975
+          - code: IIC044
+            value: 7992966
+          - code: IIC349
+            value: 2191975
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        credits:
+          example:
+          - code: IIC058
+            value: 9938223
+          - code: IIC056
+            value: 8475299
+          - code: IIC057
+            value: 4623701
+          - code: IIC046
+            value: 4287282
+          - code: IIC047
+            value: 8869053
+          - code: IIC321
+            value: 1061359
+          - code: IIC048
+            value: 904885
+          - code: IIC049
+            value: 2114387
+          - code: IIC322
+            value: 3695399
+          - code: IIC050
+            value: 7708530
+          - code: IIC051
+            value: 4709782
+          - code: IIC323
+            value: 785248
+          - code: IIC052
+            value: 1958801
+          - code: IIC053
+            value: 2973936
+          - code: IIC324
+            value: 7501911
+          - code: IIC198
+            value: 5401742
+          - code: IIC199
+            value: 820924
+          - code: IIC325
+            value: 1259077
+          - code: IIC180
+            value: 7708999
+          - code: IIC181
+            value: 1031201
+          - code: IIC326
+            value: 3035617
+          - code: IIC054
+            value: 8144929
+          - code: IIC055
+            value: 8224348
+          - code: IIC328
+            value: 8716595
+          - code: IIC182
+            value: 1637403
+          - code: IIC183
+            value: 1761208
+          - code: IIC327
+            value: 1541577
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        financialAssets:
+          example:
+          - code: IIC066
+            value: 7097429
+          - code: IIC059
+            value: 1410153
+          - code: IIC060
+            value: 3924068
+          - code: IIC061
+            value: 79237
+          - code: IIC200
+            value: 1994208
+          - code: IIC062
+            value: 1902624
+          - code: IIC063
+            value: 9525608
+          - code: IIC064
+            value: 8391431
+          - code: IIC201
+            value: 3597302
+          - code: IIC065
+            value: 8942316
+          - code: IIC202
+            value: 7095477
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        cashEquivalents:
+          example:
+          - code: IIC070
+            value: 3543605
+          - code: IIC067
+            value: 9184855
+          - code: IIC068
+            value: 7738205
+          - code: IIC069
+            value: 7587003
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        liabilitiesAggregateValues:
+          example:
+          - code: IIC084
+            value: 6642553
+          - code: IIC088
+            value: 8442265
+          - code: IIC089
+            value: 3058214
+          - code: IIC118
+            value: 7479075
+          - code: IIC119
+            value: 8849806
+          - code: IIC120
+            value: 1090529
+          - code: IIC121
+            value: 434454
+          - code: IIC122
+            value: 5282690
+          - code: IIC123
+            value: 412662
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        netWorth:
+          example:
+          - code: IIC075
+            value: 6126827
+          - code: IIC076
+            value: 4506631
+          - code: IIC077
+            value: 8127674
+          - code: IIC078
+            value: 7596150
+          - code: IIC079
+            value: 6260749
+          - code: IIC080
+            value: 1700394
+          - code: IIC081
+            value: 3038943
+          - code: IIC082
+            value: 6499156
+          - code: IIC083
+            value: 914358
+          - code: IIC203
+            value: 5420119
+          - code: IIC204
+            value: 654608
+          - code: IIC205
+            value: 1124092
+          - code: IIC206
+            value: 8536140
+          - code: IIC207
+            value: 7139278
+          - code: IIC208
+            value: 1596585
+          - code: IIC209
+            value: 8253146
+          - code: IIC210
+            value: 1778731
+          - code: IIC211
+            value: 9262956
+          - code: IIC212
+            value: 9978500
+          - code: IIC213
+            value: 6668171
+          - code: IIC345
+            value: 7969040
+          - code: IIC214
+            value: 1986624
+          - code: IIC215
+            value: 712187
+          - code: IIC216
+            value: 7199886
+          - code: IIC218
+            value: 4353589
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        riskProvisions:
+          example:
+          - code: IIC085
+            value: 4699423
+          - code: IIC086
+            value: 3801061
+          - code: IIC219
+            value: 6111982
+          - code: IIC087
+            value: 3930484
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        debts:
+          example:
+          - code: IIC116
+            value: 7467909
+          - code: IIC117
+            value: 4526045
+          - code: IIC090
+            value: 4695636
+          - code: IIC091
+            value: 6382309
+          - code: IIC329
+            value: 5934251
+          - code: IIC092
+            value: 3416397
+          - code: IIC093
+            value: 6098481
+          - code: IIC330
+            value: 8897733
+          - code: IIC184
+            value: 368104
+          - code: IIC185
+            value: 4571591
+          - code: IIC331
+            value: 498646
+          - code: IIC094
+            value: 9641478
+          - code: IIC095
+            value: 3619972
+          - code: IIC332
+            value: 1612087
+          - code: IIC096
+            value: 5435156
+          - code: IIC097
+            value: 9738932
+          - code: IIC333
+            value: 5663953
+          - code: IIC098
+            value: 4004367
+          - code: IIC099
+            value: 9941270
+          - code: IIC334
+            value: 3076517
+          - code: IIC100
+            value: 9518251
+          - code: IIC101
+            value: 8523831
+          - code: IIC335
+            value: 7306743
+          - code: IIC102
+            value: 5722063
+          - code: IIC103
+            value: 2229037
+          - code: IIC336
+            value: 9918940
+          - code: IIC104
+            value: 9081678
+          - code: IIC105
+            value: 8731391
+          - code: IIC337
+            value: 2073623
+          - code: IIC106
+            value: 5349555
+          - code: IIC107
+            value: 7160610
+          - code: IIC338
+            value: 2481309
+          - code: IIC108
+            value: 9973880
+          - code: IIC109
+            value: 9348691
+          - code: IIC339
+            value: 454151
+          - code: IIC220
+            value: 2883662
+          - code: IIC221
+            value: 902518
+          - code: IIC340
+            value: 528256
+          - code: IIC110
+            value: 6987889
+          - code: IIC111
+            value: 3793169
+          - code: IIC341
+            value: 4623325
+          - code: IIC112
+            value: 3394368
+          - code: IIC113
+            value: 778888
+          - code: IIC342
+            value: 8056987
+          - code: IIC114
+            value: 6055701
+          - code: IIC115
+            value: 8058705
+          - code: IIC343
+            value: 1605338
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        incomeStatementAggregateValues:
+          example:
+          - code: IIC130
+            value: 9422323
+          - code: IIC149
+            value: 2996397
+          - code: IIC224
+            value: 8857691
+          - code: IIC161
+            value: 7625197
+          - code: IIC170
+            value: 1691787
+          - code: IIC176
+            value: 6325111
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        productionValue:
+          example:
+          - code: IIC124
+            value: 2671129
+          - code: IIC125
+            value: 6454261
+          - code: IIC126
+            value: 4642625
+          - code: IIC186
+            value: 1819071
+          - code: IIC127
+            value: 1164650
+          - code: IIC128
+            value: 5788881
+          - code: IIC129
+            value: 5368502
+          - code: IIC223
+            value: 3360042
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        productionCosts:
+          example:
+          - code: IIC131
+            value: 6687852
+          - code: IIC132
+            value: 5801542
+          - code: IIC133
+            value: 2370865
+          - code: IIC139
+            value: 1610434
+          - code: IIC134
+            value: 8244360
+          - code: IIC135
+            value: 4633312
+          - code: IIC136
+            value: 5295239
+          - code: IIC137
+            value: 7174015
+          - code: IIC138
+            value: 8307453
+          - code: IIC187
+            value: 6494993
+          - code: IIC144
+            value: 690719
+          - code: IIC140
+            value: 9179388
+          - code: IIC141
+            value: 8976488
+          - code: IIC142
+            value: 1489987
+          - code: IIC188
+            value: 9588511
+          - code: IIC143
+            value: 9523179
+          - code: IIC145
+            value: 7684659
+          - code: IIC146
+            value: 764447
+          - code: IIC147
+            value: 7115055
+          - code: IIC148
+            value: 5826381
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        revenuesFinancialCharges:
+          example:
+          - code: IIC150
+            value: 8845544
+          - code: IIC151
+            value: 4255863
+          - code: IIC225
+            value: 1586785
+          - code: IIC226
+            value: 7809595
+          - code: IIC227
+            value: 1947802
+          - code: IIC228
+            value: 9462742
+          - code: IIC229
+            value: 3162440
+          - code: IIC158
+            value: 2587784
+          - code: IIC152
+            value: 2426099
+          - code: IIC153
+            value: 2359601
+          - code: IIC230
+            value: 3337563
+          - code: IPL231
+            value: 198897
+          - code: IPL232
+            value: 7515831
+          - code: IIC233
+            value: 5179026
+          - code: IIC234
+            value: 2770328
+          - code: IIC154
+            value: 4287042
+          - code: IIC155
+            value: 2863196
+          - code: IIC189
+            value: 6318556
+          - code: IIC156
+            value: 8268684
+          - code: IIC157
+            value: 4030128
+          - code: IIC235
+            value: 1724207
+          - code: IIC236
+            value: 6558458
+          - code: IIC237
+            value: 9847693
+          - code: IIC238
+            value: 4487105
+          - code: IIC239
+            value: 9611883
+          - code: IIC159
+            value: 9119957
+          - code: IIC160
+            value: 6816271
+          - code: IIC240
+            value: 6282958
+          - code: IIC241
+            value: 6938225
+          - code: IIC242
+            value: 9923657
+          - code: IIC243
+            value: 9944177
+          - code: IIC244
+            value: 9401221
+          - code: IIC190
+            value: 5739977
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        adjustments:
+          example:
+          - code: IIC165
+            value: 4169815
+          - code: IIC162
+            value: 4593453
+          - code: IIC163
+            value: 5055015
+          - code: IIC164
+            value: 5180926
+          - code: IIC245
+            value: 466923
+          - code: IIC350
+            value: 9836615
+          - code: IIC169
+            value: 9205312
+          - code: IIC166
+            value: 2889892
+          - code: IIC167
+            value: 4116219
+          - code: IIC168
+            value: 4147652
+          - code: IIC246
+            value: 2000684
+          - code: IICC351
+            value: 771941
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        annualResult:
+          example:
+          - code: IIC171
+            value: 8874826
+          - code: IIC172
+            value: 7745470
+          - code: IIC173
+            value: 3605598
+          - code: IIC175
+            value: 7690284
+          - code: IIC174
+            value: 8128397
+          - code: IIC177
+            value: 3170353
+          - code: IIC178
+            value: 8310830
+          - code: IIC191
+            value: 8751039
+          - code: IIC347
+            value: 6025520
+          - code: IIC192
+            value: 7061125
+          - code: IIC250
+            value: 4616320
+          - code: IIC179
+            value: 1289901
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+      type: object
+    DownloadDataArrayType:
+      description: Download Data array
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/DownloadCompanyDataType'
+          type: array
+      title: Download Data Array
+    DownloadResultType:
+      allOf:
+      - $ref: '#/components/schemas/MetadataType'
+      - $ref: '#/components/schemas/DownloadDataArrayType'
+      description: companies list with the Marketing List or datapackets requested
+      title: Download companies data
+    DownloadCompanyDataType:
+      properties:
+        margoId:
+          example: ITA_02083271201_PROSPECT_O39770
+          type: string
+        portfolioInformation:
+          $ref: '#/components/schemas/DownloadCompanyDataType_portfolioInformation'
+        companyDetails:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyDetails'
+        legalForm:
+          $ref: '#/components/schemas/SearchCompanyDataType_legalForm'
+        companyStatus:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyStatus'
+        companyDates:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyDates'
+        address:
+          $ref: '#/components/schemas/SearchCompanyDataType_address'
+        istatTownCode:
+          $ref: '#/components/schemas/SearchCompanyDataType_istatTownCode'
+        geoCoordinates:
+          $ref: '#/components/schemas/SearchCompanyDataType_geoCoordinates'
+        marketable:
+          $ref: '#/components/schemas/SearchCompanyDataType_marketable'
+        branches:
+          $ref: '#/components/schemas/SearchCompanyDataType_branches'
+        atecoClassification:
+          $ref: '#/components/schemas/SearchCompanyDataType_atecoClassification'
+        internationalClassification:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalClassification'
+        ecofin:
+          $ref: '#/components/schemas/DownloadCompanyDataType_ecofin'
+        operatingResults:
+          $ref: '#/components/schemas/SearchCompanyDataType_operatingResults'
+        employees:
+          $ref: '#/components/schemas/SearchCompanyDataType_employees'
+        employeesStatistic:
+          $ref: '#/components/schemas/SearchCompanyDataType_employeesStatistic'
+        mail:
+          $ref: '#/components/schemas/SearchCompanyDataType_mail'
+        pec:
+          example: info@crif.com
+          type: string
+        contacts:
+          $ref: '#/components/schemas/SearchCompanyDataType_contacts'
+        webAndSocial:
+          $ref: '#/components/schemas/SearchCompanyDataType_webAndSocial'
+        stateOwned:
+          $ref: '#/components/schemas/SearchCompanyDataType_stateOwned'
+        stateOwnedTelco:
+          $ref: '#/components/schemas/SearchCompanyDataType_stateOwnedTelco'
+        publicTenders:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_publicTenders_inner'
+          type: array
+        foreignTrade:
+          $ref: '#/components/schemas/SearchCompanyDataType_foreignTrade'
+        innovativeSmeAndSu:
+          $ref: '#/components/schemas/SearchCompanyDataType_innovativeSmeAndSu'
+        managers:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_managers_inner'
+          type: array
+        shareholdersInfo:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_shareholdersInfo_inner'
+          type: array
+        corporateGroups:
+          $ref: '#/components/schemas/SearchCompanyDataType_corporateGroups'
+        subsidiaries:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_subsidiaries_inner'
+          type: array
+        affiliateCompanies:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_affiliateCompanies_inner'
+          type: array
+        artisanBusinessRegistry:
+          $ref: '#/components/schemas/SearchCompanyDataType_artisanBusinessRegistry'
+        soaCertification:
+          $ref: '#/components/schemas/SearchCompanyDataType_soaCertification'
+        isoCertifications:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_isoCertifications_inner'
+          type: array
+        financialCycle:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialCycle'
+        coverageRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_coverageRatios'
+        efficiency:
+          $ref: '#/components/schemas/SearchCompanyDataType_efficiency'
+        leverageRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_leverageRatios'
+        liquidityRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_liquidityRatios'
+        profitability:
+          $ref: '#/components/schemas/SearchCompanyDataType_profitability'
+        financialBurden:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialBurden'
+        indebtedness:
+          $ref: '#/components/schemas/SearchCompanyDataType_indebtedness'
+        financialStability:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialStability'
+        structureRatios:
+          $ref: '#/components/schemas/SearchCompanyDataType_structureRatios'
+        development:
+          $ref: '#/components/schemas/SearchCompanyDataType_development'
+        financialStatementKpi:
+          $ref: '#/components/schemas/SearchCompanyDataType_financialStatementKpi'
+        telcoAnalytics:
+          $ref: '#/components/schemas/SearchCompanyDataType_telcoAnalytics'
+        seasonality:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality'
+        creditNeeds:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds'
+        cribisDnBRating:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisDnBRating'
+        financialStrenght:
+          example: "80"
+          type: string
+        failureScore:
+          example: 5
+          type: number
+        cribisDnBPaydex:
+          example: 5
+          type: number
+        delinquencyScore:
+          example: 5
+          type: number
+        cribisDnBCommercialCreditAppraisal:
+          example: 5
+          type: number
+        itpRisk:
+          example: 5
+          type: number
+        governanceRiskIndex:
+          $ref: '#/components/schemas/SearchCompanyDataType_governanceRiskIndex'
+        crifBusinessIndex:
+          $ref: '#/components/schemas/SearchCompanyDataType_crifBusinessIndex'
+        industryRating:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisDnBRating'
+        delinquencySectorRating:
+          example: 1
+          type: number
+        industryFailureScore:
+          example: 1
+          type: number
+        industryPaydex:
+          example: 1
+          type: number
+        cribisScoreStateOwned:
+          $ref: '#/components/schemas/SearchCompanyDataType_cribisScoreStateOwned'
+        financialEconomicScore:
+          example: 80
+          type: number
+        territorialScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_territorialScore'
+        supplierScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_supplierScore'
+        utilities:
+          $ref: '#/components/schemas/SearchCompanyDataType_utilities'
+        retailAnalytics:
+          $ref: '#/components/schemas/SearchCompanyDataType_retailAnalytics'
+        internazionalizationScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_internazionalizationScore'
+        digitalAttitudeScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_digitalAttitudeScore'
+        innovationScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_innovationScore'
+        estimatedTurnover:
+          example: 1000000
+          type: number
+        companyIdentification:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyIdentification'
+        internationalIdentification:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalIdentification'
+        affidabilityScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_affidabilityScore'
+        semanticCluster:
+          $ref: '#/components/schemas/SearchCompanyDataType_semanticCluster'
+        assetsAggregateValues:
+          example:
+          - code: IIC001
+            value: 4914222
+          - code: IIC039
+            value: 1309088
+          - code: IIC071
+            value: 5859484
+          - code: IIC072
+            value: 2974359
+          - code: IIC073
+            value: 413563
+          - code: IIC074
+            value: 1500483
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        creditsToShareholders:
+          example:
+          - code: IIC193
+            value: 14814
+          - code: IIC002
+            value: 6836099
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        intangibleFixedAssets:
+          example:
+          - code: IIC011
+            value: 5270208
+          - code: IIC003
+            value: 2518949
+          - code: IIC004
+            value: 9042727
+          - code: IIC005
+            value: 1445431
+          - code: IIC006
+            value: 1355410
+          - code: IIC007
+            value: 9167285
+          - code: IIC008
+            value: 9429231
+          - code: IIC009
+            value: 2298581
+          - code: IIC010
+            value: 8544026
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        tangibleFixedAssets:
+          example:
+          - code: IIC018
+            value: 131570
+          - code: IIC012
+            value: 3522262
+          - code: IIC013
+            value: 2222889
+          - code: IIC014
+            value: 586379
+          - code: IIC015
+            value: 1010440
+          - code: IIC016
+            value: 1565918
+          - code: IIC017
+            value: 5015716
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        financialFixedAssets:
+          example:
+          - code: IIC038
+            value: 7082928
+          - code: IIC032
+            value: 4758520
+          - code: IIC033
+            value: 3776077
+          - code: IIC023
+            value: 8356698
+          - code: IIC019
+            value: 3173583
+          - code: IIC020
+            value: 5196311
+          - code: IIC021
+            value: 5814149
+          - code: IIC194
+            value: 3097232
+          - code: IIC022
+            value: 5605871
+          - code: IIC034
+            value: 2427155
+          - code: IIC024
+            value: 4443039
+          - code: IIC025
+            value: 5529022
+          - code: IIC316
+            value: 3064496
+          - code: IIC026
+            value: 7687346
+          - code: IIC027
+            value: 6037262
+          - code: IIC317
+            value: 917079
+          - code: IIC028
+            value: 4576271
+          - code: IIC029
+            value: 4424968
+          - code: IIC318
+            value: 1127265
+          - code: IIC195
+            value: 9890139
+          - code: IIC196
+            value: 9077834
+          - code: IIC319
+            value: 9796719
+          - code: IIC030
+            value: 6114959
+          - code: IIC031
+            value: 2341462
+          - code: IIC320
+            value: 1503019
+          - code: IIC035
+            value: 6553122
+          - code: IIC036
+            value: 842655
+          - code: IIC037
+            value: 1954924
+          - code: IIC197
+            value: 8772112
+          - code: IIC344
+            value: 1301542
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        inventory:
+          example:
+          - code: IIC045
+            value: 8905832
+          - code: IIC040
+            value: 6946609
+          - code: IIC041
+            value: 6148562
+          - code: IIC042
+            value: 503363
+          - code: IIC043
+            value: 8145975
+          - code: IIC044
+            value: 7992966
+          - code: IIC349
+            value: 2191975
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        credits:
+          example:
+          - code: IIC058
+            value: 9938223
+          - code: IIC056
+            value: 8475299
+          - code: IIC057
+            value: 4623701
+          - code: IIC046
+            value: 4287282
+          - code: IIC047
+            value: 8869053
+          - code: IIC321
+            value: 1061359
+          - code: IIC048
+            value: 904885
+          - code: IIC049
+            value: 2114387
+          - code: IIC322
+            value: 3695399
+          - code: IIC050
+            value: 7708530
+          - code: IIC051
+            value: 4709782
+          - code: IIC323
+            value: 785248
+          - code: IIC052
+            value: 1958801
+          - code: IIC053
+            value: 2973936
+          - code: IIC324
+            value: 7501911
+          - code: IIC198
+            value: 5401742
+          - code: IIC199
+            value: 820924
+          - code: IIC325
+            value: 1259077
+          - code: IIC180
+            value: 7708999
+          - code: IIC181
+            value: 1031201
+          - code: IIC326
+            value: 3035617
+          - code: IIC054
+            value: 8144929
+          - code: IIC055
+            value: 8224348
+          - code: IIC328
+            value: 8716595
+          - code: IIC182
+            value: 1637403
+          - code: IIC183
+            value: 1761208
+          - code: IIC327
+            value: 1541577
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        financialAssets:
+          example:
+          - code: IIC066
+            value: 7097429
+          - code: IIC059
+            value: 1410153
+          - code: IIC060
+            value: 3924068
+          - code: IIC061
+            value: 79237
+          - code: IIC200
+            value: 1994208
+          - code: IIC062
+            value: 1902624
+          - code: IIC063
+            value: 9525608
+          - code: IIC064
+            value: 8391431
+          - code: IIC201
+            value: 3597302
+          - code: IIC065
+            value: 8942316
+          - code: IIC202
+            value: 7095477
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        cashEquivalents:
+          example:
+          - code: IIC070
+            value: 3543605
+          - code: IIC067
+            value: 9184855
+          - code: IIC068
+            value: 7738205
+          - code: IIC069
+            value: 7587003
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        liabilitiesAggregateValues:
+          example:
+          - code: IIC084
+            value: 6642553
+          - code: IIC088
+            value: 8442265
+          - code: IIC089
+            value: 3058214
+          - code: IIC118
+            value: 7479075
+          - code: IIC119
+            value: 8849806
+          - code: IIC120
+            value: 1090529
+          - code: IIC121
+            value: 434454
+          - code: IIC122
+            value: 5282690
+          - code: IIC123
+            value: 412662
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        netWorth:
+          example:
+          - code: IIC075
+            value: 6126827
+          - code: IIC076
+            value: 4506631
+          - code: IIC077
+            value: 8127674
+          - code: IIC078
+            value: 7596150
+          - code: IIC079
+            value: 6260749
+          - code: IIC080
+            value: 1700394
+          - code: IIC081
+            value: 3038943
+          - code: IIC082
+            value: 6499156
+          - code: IIC083
+            value: 914358
+          - code: IIC203
+            value: 5420119
+          - code: IIC204
+            value: 654608
+          - code: IIC205
+            value: 1124092
+          - code: IIC206
+            value: 8536140
+          - code: IIC207
+            value: 7139278
+          - code: IIC208
+            value: 1596585
+          - code: IIC209
+            value: 8253146
+          - code: IIC210
+            value: 1778731
+          - code: IIC211
+            value: 9262956
+          - code: IIC212
+            value: 9978500
+          - code: IIC213
+            value: 6668171
+          - code: IIC345
+            value: 7969040
+          - code: IIC214
+            value: 1986624
+          - code: IIC215
+            value: 712187
+          - code: IIC216
+            value: 7199886
+          - code: IIC218
+            value: 4353589
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        riskProvisions:
+          example:
+          - code: IIC085
+            value: 4699423
+          - code: IIC086
+            value: 3801061
+          - code: IIC219
+            value: 6111982
+          - code: IIC087
+            value: 3930484
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        debts:
+          example:
+          - code: IIC116
+            value: 7467909
+          - code: IIC117
+            value: 4526045
+          - code: IIC090
+            value: 4695636
+          - code: IIC091
+            value: 6382309
+          - code: IIC329
+            value: 5934251
+          - code: IIC092
+            value: 3416397
+          - code: IIC093
+            value: 6098481
+          - code: IIC330
+            value: 8897733
+          - code: IIC184
+            value: 368104
+          - code: IIC185
+            value: 4571591
+          - code: IIC331
+            value: 498646
+          - code: IIC094
+            value: 9641478
+          - code: IIC095
+            value: 3619972
+          - code: IIC332
+            value: 1612087
+          - code: IIC096
+            value: 5435156
+          - code: IIC097
+            value: 9738932
+          - code: IIC333
+            value: 5663953
+          - code: IIC098
+            value: 4004367
+          - code: IIC099
+            value: 9941270
+          - code: IIC334
+            value: 3076517
+          - code: IIC100
+            value: 9518251
+          - code: IIC101
+            value: 8523831
+          - code: IIC335
+            value: 7306743
+          - code: IIC102
+            value: 5722063
+          - code: IIC103
+            value: 2229037
+          - code: IIC336
+            value: 9918940
+          - code: IIC104
+            value: 9081678
+          - code: IIC105
+            value: 8731391
+          - code: IIC337
+            value: 2073623
+          - code: IIC106
+            value: 5349555
+          - code: IIC107
+            value: 7160610
+          - code: IIC338
+            value: 2481309
+          - code: IIC108
+            value: 9973880
+          - code: IIC109
+            value: 9348691
+          - code: IIC339
+            value: 454151
+          - code: IIC220
+            value: 2883662
+          - code: IIC221
+            value: 902518
+          - code: IIC340
+            value: 528256
+          - code: IIC110
+            value: 6987889
+          - code: IIC111
+            value: 3793169
+          - code: IIC341
+            value: 4623325
+          - code: IIC112
+            value: 3394368
+          - code: IIC113
+            value: 778888
+          - code: IIC342
+            value: 8056987
+          - code: IIC114
+            value: 6055701
+          - code: IIC115
+            value: 8058705
+          - code: IIC343
+            value: 1605338
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        incomeStatementAggregateValues:
+          example:
+          - code: IIC130
+            value: 9422323
+          - code: IIC149
+            value: 2996397
+          - code: IIC224
+            value: 8857691
+          - code: IIC161
+            value: 7625197
+          - code: IIC170
+            value: 1691787
+          - code: IIC176
+            value: 6325111
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        productionValue:
+          example:
+          - code: IIC124
+            value: 2671129
+          - code: IIC125
+            value: 6454261
+          - code: IIC126
+            value: 4642625
+          - code: IIC186
+            value: 1819071
+          - code: IIC127
+            value: 1164650
+          - code: IIC128
+            value: 5788881
+          - code: IIC129
+            value: 5368502
+          - code: IIC223
+            value: 3360042
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        productionCosts:
+          example:
+          - code: IIC131
+            value: 6687852
+          - code: IIC132
+            value: 5801542
+          - code: IIC133
+            value: 2370865
+          - code: IIC139
+            value: 1610434
+          - code: IIC134
+            value: 8244360
+          - code: IIC135
+            value: 4633312
+          - code: IIC136
+            value: 5295239
+          - code: IIC137
+            value: 7174015
+          - code: IIC138
+            value: 8307453
+          - code: IIC187
+            value: 6494993
+          - code: IIC144
+            value: 690719
+          - code: IIC140
+            value: 9179388
+          - code: IIC141
+            value: 8976488
+          - code: IIC142
+            value: 1489987
+          - code: IIC188
+            value: 9588511
+          - code: IIC143
+            value: 9523179
+          - code: IIC145
+            value: 7684659
+          - code: IIC146
+            value: 764447
+          - code: IIC147
+            value: 7115055
+          - code: IIC148
+            value: 5826381
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        revenuesFinancialCharges:
+          example:
+          - code: IIC150
+            value: 8845544
+          - code: IIC151
+            value: 4255863
+          - code: IIC225
+            value: 1586785
+          - code: IIC226
+            value: 7809595
+          - code: IIC227
+            value: 1947802
+          - code: IIC228
+            value: 9462742
+          - code: IIC229
+            value: 3162440
+          - code: IIC158
+            value: 2587784
+          - code: IIC152
+            value: 2426099
+          - code: IIC153
+            value: 2359601
+          - code: IIC230
+            value: 3337563
+          - code: IPL231
+            value: 198897
+          - code: IPL232
+            value: 7515831
+          - code: IIC233
+            value: 5179026
+          - code: IIC234
+            value: 2770328
+          - code: IIC154
+            value: 4287042
+          - code: IIC155
+            value: 2863196
+          - code: IIC189
+            value: 6318556
+          - code: IIC156
+            value: 8268684
+          - code: IIC157
+            value: 4030128
+          - code: IIC235
+            value: 1724207
+          - code: IIC236
+            value: 6558458
+          - code: IIC237
+            value: 9847693
+          - code: IIC238
+            value: 4487105
+          - code: IIC239
+            value: 9611883
+          - code: IIC159
+            value: 9119957
+          - code: IIC160
+            value: 6816271
+          - code: IIC240
+            value: 6282958
+          - code: IIC241
+            value: 6938225
+          - code: IIC242
+            value: 9923657
+          - code: IIC243
+            value: 9944177
+          - code: IIC244
+            value: 9401221
+          - code: IIC190
+            value: 5739977
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        adjustments:
+          example:
+          - code: IIC165
+            value: 4169815
+          - code: IIC162
+            value: 4593453
+          - code: IIC163
+            value: 5055015
+          - code: IIC164
+            value: 5180926
+          - code: IIC245
+            value: 466923
+          - code: IIC350
+            value: 9836615
+          - code: IIC169
+            value: 9205312
+          - code: IIC166
+            value: 2889892
+          - code: IIC167
+            value: 4116219
+          - code: IIC168
+            value: 4147652
+          - code: IIC246
+            value: 2000684
+          - code: IICC351
+            value: 771941
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+        annualResult:
+          example:
+          - code: IIC171
+            value: 8874826
+          - code: IIC172
+            value: 7745470
+          - code: IIC173
+            value: 3605598
+          - code: IIC175
+            value: 7690284
+          - code: IIC174
+            value: 8128397
+          - code: IIC177
+            value: 3170353
+          - code: IIC178
+            value: 8310830
+          - code: IIC191
+            value: 8751039
+          - code: IIC347
+            value: 6025520
+          - code: IIC192
+            value: 7061125
+          - code: IIC250
+            value: 4616320
+          - code: IIC179
+            value: 1289901
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_assetsAggregateValues_inner'
+          type: array
+      type: object
+    SimilarityResultType:
+      description: |-
+        The item `filters` contains a subset of parameters (individuated by similarity algorithm) that should be used in **POST /prospecting/search**.
+
+        `total Elements` indicates how many companies satisfied query suggest by similarity parameters
+      example:
+        filters:
+          booleanfilters:
+          - filterId: hasWebsite
+            value: true
+          - filterId: hasWebsite
+            value: true
+          numericfilters:
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          - filterId: employees
+            value:
+              min: 1
+              max: 50
+          stringfilters:
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          - filterId: companyName
+            values:
+            - Crif s.p.a.
+            - CRIBIS
+          domainfilters:
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          - filterId: province
+            codes:
+            - MI
+            - RN
+            - TO
+          datefilters:
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+          - filterId: foundingDate
+            value:
+              min: 2000-01-01
+              max: 2000-12-31
+        totalElements: 0.8008281904610115
+      properties:
+        filters:
+          $ref: '#/components/schemas/FiltersType'
+        totalElements:
+          type: number
+      title: Similarity result
+    PortfolioType_companiesPortfolioStatus:
+      properties:
+        prospect:
+          type: integer
+        client:
+          type: integer
+        supplier:
+          type: integer
+        lead:
+          type: integer
+        competitor:
+          type: integer
+      type: object
+    FiltersType_numericfilters_inner:
+      example:
+        filterId: employees
+        value:
+          min: 1
+          max: 50
+      properties:
+        filterId:
+          type: string
+        value:
+          $ref: '#/components/schemas/NumericFilterType'
+      type: object
+    FiltersType_datefilters_inner:
+      example:
+        filterId: foundingDate
+        value:
+          min: 2000-01-01
+          max: 2000-12-31
+      properties:
+        filterId:
+          type: string
+        value:
+          $ref: '#/components/schemas/DateFilterType'
+      type: object
+    FiltersType_booleanfilters_inner:
+      example:
+        filterId: hasWebsite
+        value: true
+      properties:
+        filterId:
+          type: string
+        value:
+          type: boolean
+      type: object
+    FiltersType_stringfilters_inner:
+      example:
+        filterId: companyName
+        values:
+        - Crif s.p.a.
+        - CRIBIS
+      properties:
+        filterId:
+          type: string
+        values:
+          items:
+            type: string
+          type: array
+      type: object
+    FiltersType_domainfilters_inner:
+      example:
+        filterId: province
+        codes:
+        - MI
+        - RN
+        - TO
+      properties:
+        filterId:
+          type: string
+        codes:
+          items:
+            type: string
+          type: array
+      type: object
+    CustomVariablesFiltersType_numericfilters_inner:
+      example:
+        variableIndex: 0
+        value:
+          min: 10
+          max: 20
+      properties:
+        variableIndex:
+          type: integer
+        value:
+          $ref: '#/components/schemas/NumericFilterType'
+      type: object
+    CustomVariablesFiltersType_datefilters_inner:
+      example:
+        variableIndex: 1
+        value:
+          min: 2000-10-31
+          max: 2000-11-30
+      properties:
+        variableIndex:
+          type: integer
+        value:
+          $ref: '#/components/schemas/DateFilterType'
+      type: object
+    CustomVariablesFiltersType_booleanfilters_inner:
+      example:
+        variableIndex: 2
+        value: true
+      properties:
+        variableIndex:
+          type: integer
+        value:
+          type: boolean
+      type: object
+    CustomVariablesFiltersType_stringfilters_inner:
+      example:
+        variableIndex: 3
+        values:
+        - Client
+      properties:
+        variableIndex:
+          type: integer
+        values:
+          items:
+            type: string
+          type: array
+      type: object
+    PortfolioFiltersType_amount:
+      example:
+        min: 150
+        max: 2000000
+      properties:
+        min:
+          type: integer
+        max:
+          type: integer
+      type: object
+    DownloadType_content:
+      oneOf:
+      - $ref: '#/components/schemas/DataPacketArrayType'
+      - $ref: '#/components/schemas/MarketingListType'
+    SearchType_content:
+      example:
+        marketingList: marketing
+      oneOf:
+      - $ref: '#/components/schemas/DataPacketArrayType'
+      - $ref: '#/components/schemas/MarketingListType'
+    SearchCompanyDataType_ateco:
+      properties:
+        code:
+          example: "829"
+          type: string
+        description:
+          example: Database management (database activities)
+          type: string
+      type: object
+    SearchCompanyDataType_officeType:
+      properties:
+        code:
+          example: HQ
+          type: string
+        description:
+          example: HEADQUARTER
+          type: string
+      type: object
+    SearchCompanyDataType_companyDetails:
+      properties:
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        vatCode:
+          example: "2083271201"
+          type: string
+        taxCode:
+          example: "2083271201"
+          type: string
+        lastUpdateDate:
+          format: date-time
+          type: string
+        cciaa:
+          example: BO
+          type: string
+        reaCode:
+          example: "409999"
+          type: string
+        crifNumber:
+          example: ITDD03050AS9999
+          type: string
+        officeType:
+          $ref: '#/components/schemas/SearchCompanyDataType_officeType'
+      type: object
+    SearchCompanyDataType_legalForm_legalForm:
+      properties:
+        code:
+          example: SC
+          type: string
+        description:
+          example: JOINT STOCK BUSINESS
+          type: string
+      type: object
+    SearchCompanyDataType_legalForm_detailedLegalForm:
+      properties:
+        code:
+          example: SP
+          type: string
+        description:
+          example: LIMITED COMPANY
+          type: string
+      type: object
+    SearchCompanyDataType_legalForm:
+      properties:
+        legalForm:
+          $ref: '#/components/schemas/SearchCompanyDataType_legalForm_legalForm'
+        detailedLegalForm:
+          $ref: '#/components/schemas/SearchCompanyDataType_legalForm_detailedLegalForm'
+      type: object
+    SearchCompanyDataType_companyStatus_activityStatus:
+      properties:
+        code:
+          example: A
+          type: string
+        description:
+          example: Enable
+          type: string
+      type: object
+    SearchCompanyDataType_companyStatus:
+      properties:
+        activityStatus:
+          $ref: '#/components/schemas/SearchCompanyDataType_companyStatus_activityStatus'
+      type: object
+    SearchCompanyDataType_companyDates:
+      properties:
+        registrationDate:
+          format: date-time
+          type: string
+        startDate:
+          format: date-time
+          type: string
+        incorporationDate:
+          format: date-time
+          type: string
+        foundingDate:
+          format: date-time
+          type: string
+        endDate:
+          format: date-time
+          type: string
+      type: object
+    SearchCompanyDataType_address_province:
+      properties:
+        code:
+          example: BO
+          type: string
+        description:
+          example: BOLOGNA
+          type: string
+      type: object
+    SearchCompanyDataType_address_region:
+      properties:
+        code:
+          example: "20"
+          type: string
+        description:
+          example: EMILIA ROMAGNA
+          type: string
+      type: object
+    SearchCompanyDataType_address_country:
+      properties:
+        code:
+          example: IT
+          type: string
+        description:
+          example: Italia
+          type: string
+      type: object
+    SearchCompanyDataType_address:
+      properties:
+        streetName:
+          example: VIA FRANCESCO ZANARDI 51
+          type: string
+        hamlet:
+          example: LAME
+          type: string
+        zipCode:
+          example: "40131"
+          type: string
+        town:
+          example: BOLOGNA
+          type: string
+        province:
+          $ref: '#/components/schemas/SearchCompanyDataType_address_province'
+        region:
+          $ref: '#/components/schemas/SearchCompanyDataType_address_region'
+        country:
+          $ref: '#/components/schemas/SearchCompanyDataType_address_country'
+      type: object
+    SearchCompanyDataType_istatTownCode:
+      properties:
+        code:
+          example: "037006"
+          type: string
+        description:
+          example: BOLOGNA
+          type: string
+      type: object
+    SearchCompanyDataType_geoCoordinates:
+      properties:
+        longitude:
+          example: 8.534999
+          type: number
+        latitude:
+          example: 39.312999
+          type: number
+      type: object
+    SearchCompanyDataType_marketable:
+      properties:
+        isMarketable:
+          example: false
+          type: boolean
+      type: object
+    SearchCompanyDataType_branches_brancheType:
+      properties:
+        code:
+          example: SSL
+          type: string
+        description:
+          example: SEDE AMMINISTRATIVA E SEDE LEGALE
+          type: string
+      type: object
+    SearchCompanyDataType_branches:
+      properties:
+        numberOfBranches:
+          example: 3
+          type: number
+        brancheType:
+          $ref: '#/components/schemas/SearchCompanyDataType_branches_brancheType'
+      type: object
+    SearchCompanyDataType_atecoClassification:
+      properties:
+        ateco:
+          $ref: '#/components/schemas/SearchCompanyDataType_ateco'
+        secondaryAteco:
+          example: "85592, 7733, 822, 6201, 6202, 61901"
+          type: string
+      type: object
+    SearchCompanyDataType_internationalClassification_nace:
+      properties:
+        code:
+          example: ND99
+          type: string
+        description:
+          example: N.D.
+          type: string
+      type: object
+    SearchCompanyDataType_internationalClassification_primarySic:
+      properties:
+        code:
+          example: "7374"
+          type: string
+        description:
+          example: DATA PROCESSING SERVICES
+          type: string
+      type: object
+    SearchCompanyDataType_internationalClassification:
+      properties:
+        nace:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalClassification_nace'
+        primarySic:
+          $ref: '#/components/schemas/SearchCompanyDataType_internationalClassification_primarySic'
+        secondarySic:
+          example: "4899, 7372, 7399, 7394, 7392"
+          type: string
+      type: object
+    SearchCompanyDataType_ecofin_turnoverRange:
+      properties:
+        code:
+          example: TR11
+          type: string
+        description:
+          example: 10000000 - 49999999
+          type: string
+      type: object
+    SearchCompanyDataType_ecofin_enterpriseSize:
+      properties:
+        code:
+          example: LARGE
+          type: string
+        description:
+          example: Large enterprise
+          type: string
+      type: object
+    SearchCompanyDataType_ecofin:
+      properties:
+        balanceSheetDate:
+          format: date-time
+          type: string
+        turnoverRange:
+          $ref: '#/components/schemas/SearchCompanyDataType_ecofin_turnoverRange'
+        turnoverYear:
+          example: 2019
+          type: number
+        turnover:
+          example: 25000000
+          type: number
+        turnoverTrend:
+          example: 5.81
+          type: number
+        shareCapital:
+          example: 200000
+          type: number
+        netWorth:
+          example: 200000
+          type: number
+        enterpriseSize:
+          $ref: '#/components/schemas/SearchCompanyDataType_ecofin_enterpriseSize'
+        turnoverGroup:
+          example: 15000000
+          type: number
+      type: object
+    SearchCompanyDataType_operatingResults:
+      properties:
+        ebitda:
+          example: -2469
+          type: number
+        ebitdaL2Y:
+          example: -3341
+          type: number
+        ebit:
+          example: -6615
+          type: number
+        ebitL2Y:
+          example: -12369
+          type: number
+        cashFlow:
+          example: -4229
+          type: number
+        cashFlowL2Y:
+          example: -3341
+          type: number
+      type: object
+    SearchCompanyDataType_employees_employeeRange:
+      properties:
+        code:
+          example: ER9
+          type: string
+        description:
+          example: 500-1000
+          type: string
+      type: object
+    SearchCompanyDataType_employees:
+      properties:
+        employeeRange:
+          $ref: '#/components/schemas/SearchCompanyDataType_employees_employeeRange'
+        employee:
+          example: 910
+          type: number
+        employeeTrend:
+          example: 2.45
+          type: number
+      type: object
+    SearchCompanyDataType_employeesStatistic:
+      properties:
+        fixedTermContract:
+          example: 10.59
+          type: number
+        permanentContract:
+          example: 20.15
+          type: number
+        partialTimeContract:
+          example: 80.35
+          type: number
+        fullTimeContract:
+          example: 5.1
+          type: number
+        director:
+          example: 2.5
+          type: number
+        frameworkContract:
+          example: 3.64
+          type: number
+        whiteCollar:
+          example: 45.69
+          type: number
+        apprentice:
+          example: 21.1
+          type: number
+      type: object
+    SearchCompanyDataType_mail:
+      properties:
+        email:
+          example: info@crif.com
+          type: string
+      type: object
+    SearchCompanyDataType_contacts:
+      properties:
+        telephoneNumber:
+          example: "514179999"
+          type: string
+        fax:
+          example: "514179999"
+          type: string
+      type: object
+    SearchCompanyDataType_webAndSocial:
+      properties:
+        eCommerce:
+          example: www.crif.it
+          type: string
+        website:
+          example: www.crif.it
+          type: string
+        hasSocial:
+          example: true
+          type: boolean
+        facebook:
+          example: https://it-it.facebook.com/
+          type: string
+        youtube:
+          example: https://www.youtube.com/
+          type: string
+        twitter:
+          example: https://twitter.com
+          type: string
+        instagram:
+          example: https://www.instagram.com/
+          type: string
+        linkedin:
+          example: https://it.linkedin.com/
+          type: string
+        pinterest:
+          example: https://www.pinterest.it/
+          type: string
+        vimeo:
+          example: https://vimeo.com/
+          type: string
+      type: object
+    SearchCompanyDataType_stateOwned_stateOwnedType:
+      properties:
+        code:
+          example: DIP_IZS
+          type: string
+        description:
+          example: Experimental zooprophylactic Institutes - Departments
+          type: string
+      type: object
+    SearchCompanyDataType_stateOwned:
+      properties:
+        isStateOwned:
+          example: true
+          type: boolean
+        stateOwnedType:
+          $ref: '#/components/schemas/SearchCompanyDataType_stateOwned_stateOwnedType'
+      type: object
+    SearchCompanyDataType_stateOwnedTelco:
+      properties:
+        landLine:
+          example: 125
+          type: number
+        landLineTrend:
+          example: 1
+          type: number
+        mobile:
+          example: 125
+          type: number
+        mobileTrend:
+          example: -2.2
+          type: number
+      type: object
+    SearchCompanyDataType_publicTenders_inner:
+      properties:
+        year:
+          example: "2018"
+          type: string
+        applied:
+          example: 15
+          type: number
+        won:
+          example: 3
+          type: number
+        value:
+          example: 15000
+          type: number
+      type: object
+    SearchCompanyDataType_foreignTrade:
+      properties:
+        isImporter:
+          example: true
+          type: boolean
+        importPercentShare:
+          example: 10
+          type: number
+        importCountries:
+          example: "Germany, Spain"
+          type: string
+        isExporter:
+          example: true
+          type: boolean
+        exportPercentShare:
+          example: 15
+          type: number
+        exportCountries:
+          example: "Brazil, Canada"
+          type: string
+      type: object
+    SearchCompanyDataType_innovativeSmeAndSu:
+      properties:
+        isInnovativeStartUp:
+          example: true
+          type: boolean
+        isInnovativeSme:
+          example: false
+          type: boolean
+      type: object
+    SearchCompanyDataType_managers_inner_roles_inner_role:
+      properties:
+        code:
+          example: AMM
+          type: string
+        description:
+          example: DIRECTOR
+          type: string
+      type: object
+    SearchCompanyDataType_managers_inner_roles_inner:
+      properties:
+        role:
+          $ref: '#/components/schemas/SearchCompanyDataType_managers_inner_roles_inner_role'
+        roleStartDate:
+          format: date-time
+          type: string
+      type: object
+    SearchCompanyDataType_managers_inner_gender:
+      properties:
+        code:
+          example: M
+          type: string
+        description:
+          example: Man
+          type: string
+      type: object
+    SearchCompanyDataType_managers_inner:
+      properties:
+        name:
+          example: Guido
+          type: string
+        surname:
+          example: Rossi
+          type: string
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_managers_inner_roles_inner'
+          type: array
+        gender:
+          $ref: '#/components/schemas/SearchCompanyDataType_managers_inner_gender'
+        taxCode:
+          example: RSSGDU95S20A944Q
+          type: string
+        birthDate:
+          format: date-time
+          type: string
+        age:
+          example: 68
+          type: number
+        birthTown:
+          example: Bologna
+          type: string
+        isLegalRepresentative:
+          example: true
+          type: boolean
+      type: object
+    SearchCompanyDataType_shareholdersInfo_inner_shareholders_inner:
+      properties:
+        taxCode:
+          example: RSSGDU95S20A944Q
+          type: string
+        crifNumber:
+          example: ITDD03050AS9999
+          type: string
+        name:
+          example: Fulvio
+          type: string
+        surname:
+          example: Rossi
+          type: string
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        sinceDate:
+          format: date-time
+          type: string
+        streetName:
+          example: Via Rossi
+          type: string
+      type: object
+    SearchCompanyDataType_shareholdersInfo_inner:
+      properties:
+        shareholders:
+          items:
+            $ref: '#/components/schemas/SearchCompanyDataType_shareholdersInfo_inner_shareholders_inner'
+          type: array
+        percentShare:
+          example: 100
+          type: number
+      type: object
+    SearchCompanyDataType_corporateGroups_nationalParentCompany_province:
+      properties:
+        code:
+          example: MI
+          type: string
+        description:
+          example: Milan
+          type: string
+      type: object
+    SearchCompanyDataType_corporateGroups_nationalParentCompany_country:
+      properties:
+        code:
+          example: IT
+          type: string
+        description:
+          example: Italy
+          type: string
+      type: object
+    SearchCompanyDataType_corporateGroups_nationalParentCompany:
+      properties:
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        streetName:
+          example: PIAZZA ALESSANDRIA 17
+          type: string
+        town:
+          example: Milan
+          type: string
+        zipCode:
+          example: "20139"
+          type: string
+        province:
+          $ref: '#/components/schemas/SearchCompanyDataType_corporateGroups_nationalParentCompany_province'
+        country:
+          $ref: '#/components/schemas/SearchCompanyDataType_corporateGroups_nationalParentCompany_country'
+      type: object
+    SearchCompanyDataType_corporateGroups:
+      properties:
+        belongsToGroup:
+          example: true
+          type: boolean
+        groupName:
+          example: DATA SCIENCE SRL
+          type: string
+        holdingCompanyName:
+          example: DATA CENTER
+          type: string
+        holdingVatCode:
+          example: "14996171333"
+          type: string
+        holdingCountry:
+          $ref: '#/components/schemas/SearchCompanyDataType_address_country'
+        nationalParentCompany:
+          $ref: '#/components/schemas/SearchCompanyDataType_corporateGroups_nationalParentCompany'
+        hasForeignParentCompany:
+          example: true
+          type: boolean
+        hasForeignSubsidiaries:
+          example: false
+          type: boolean
+        hasForeignParents:
+          example: true
+          type: boolean
+      type: object
+    SearchCompanyDataType_subsidiaries_inner_province:
+      properties:
+        code:
+          example: BO
+          type: string
+        description:
+          example: Bologna
+          type: string
+      type: object
+    SearchCompanyDataType_subsidiaries_inner:
+      properties:
+        taxCode:
+          example: RSSGDU95S20A944Q
+          type: string
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        streetName:
+          example: Via Rossi
+          type: string
+        zipCode:
+          example: "49100"
+          type: string
+        town:
+          example: Bologna
+          type: string
+        province:
+          $ref: '#/components/schemas/SearchCompanyDataType_subsidiaries_inner_province'
+      type: object
+    SearchCompanyDataType_affiliateCompanies_inner:
+      properties:
+        taxCode:
+          example: "2089999999"
+          type: string
+        companyName:
+          example: CRIF S.p.A.
+          type: string
+        percentShare:
+          example: 100
+          type: number
+      type: object
+    SearchCompanyDataType_artisanBusinessRegistry_artisanBusinessRegistry:
+      properties:
+        registrationDate:
+          format: date-time
+          type: string
+        registrationNumber:
+          example: 167089
+          type: number
+      type: object
+    SearchCompanyDataType_artisanBusinessRegistry:
+      properties:
+        belongsToArtisanBusinessRegistry:
+          type: boolean
+        artisanBusinessRegistry:
+          $ref: '#/components/schemas/SearchCompanyDataType_artisanBusinessRegistry_artisanBusinessRegistry'
+      type: object
+    SearchCompanyDataType_soaCertification:
+      properties:
+        hasSoaCertification:
+          example: false
+          type: boolean
+      type: object
+    SearchCompanyDataType_isoCertifications_inner:
+      properties:
+        code:
+          example: UNI EN 9120:2010
+          type: string
+        description:
+          example: UNI EN 9120:2010
+          type: string
+      type: object
+    SearchCompanyDataType_financialCycle:
+      properties:
+        accountsReceivableDuration:
+          example: 10
+          type: number
+        stockDuration:
+          example: 30
+          type: number
+        debtsToSuppliersDuration:
+          example: 90
+          type: number
+        financialCycleDuration:
+          example: 10
+          type: number
+      type: object
+    SearchCompanyDataType_coverageRatios:
+      properties:
+        ebitdaNetInterestCoverage:
+          example: 30
+          type: number
+        ffoNetInterestCoverage:
+          example: 80
+          type: number
+        ebitNetInterestCoverage:
+          example: 30
+          type: number
+        ebitdaGrossInterestCoverage:
+          example: 20
+          type: number
+        ebitGrossInterestCoverage:
+          example: 10
+          type: number
+      type: object
+    SearchCompanyDataType_efficiency:
+      properties:
+        turnoverIndex:
+          example: 25
+          type: number
+        inventoryRotation:
+          example: 50
+          type: number
+        currentAssetsRotation:
+          example: 90
+          type: number
+        accountsReceivableRotation:
+          example: 20
+          type: number
+      type: object
+    SearchCompanyDataType_leverageRatios:
+      properties:
+        pfnEbitda:
+          example: 10
+          type: number
+        ebitdaNetLeverage:
+          example: 80
+          type: number
+        ffoNetLeverage:
+          example: 30
+          type: number
+        ebitdaGrossLeverage:
+          example: 40
+          type: number
+      type: object
+    SearchCompanyDataType_liquidityRatios:
+      properties:
+        cashShortTermFinancialDebt:
+          example: 70
+          type: number
+        cashShortTermBankDebt:
+          example: 30
+          type: number
+        cashTotalShortTermDebt:
+          example: 70
+          type: number
+        fcfShortTermFinancialDebt:
+          example: 90
+          type: number
+      type: object
+    SearchCompanyDataType_profitability:
+      properties:
+        ros:
+          example: 50
+          type: number
+        roe:
+          example: 20
+          type: number
+        incidenceOfExtraFeaturesManagement:
+          example: 40
+          type: number
+        roi:
+          example: 10
+          type: number
+        roaMonetary:
+          example: 30
+          type: number
+      type: object
+    SearchCompanyDataType_financialBurden:
+      properties:
+        rod:
+          example: 30
+          type: number
+        rodFinanziario:
+          example: 90
+          type: number
+        burdenIndex:
+          example: 80
+          type: number
+      type: object
+    SearchCompanyDataType_indebtedness:
+      properties:
+        bankDebtTotalAssets:
+          example: 20
+          type: number
+        grossFinancialDebtTotalAssets:
+          example: 80
+          type: number
+        capitalizationDegree:
+          example: 45
+          type: number
+        leverage:
+          example: 50
+          type: number
+        bankDebtRatio:
+          example: 22
+          type: number
+        debtRatio:
+          example: 36
+          type: number
+      type: object
+    SearchCompanyDataType_financialStability:
+      properties:
+        secondaryMarginStructure:
+          example: 26
+          type: number
+        marginStructure:
+          example: 80
+          type: number
+        fixedAssetsCoverageRate:
+          example: 98
+          type: number
+        marginStructureIndex:
+          example: 46
+          type: number
+        workingCapitalCoverage:
+          example: 55
+          type: number
+        acidTest:
+          example: 36
+          type: number
+        currentRatio:
+          example: 48
+          type: number
+      type: object
+    SearchCompanyDataType_structureRatios:
+      properties:
+        netFinancialDebtEquityNetWorth:
+          example: 99
+          type: number
+        pfnNetWorth:
+          example: 74
+          type: number
+        financialDebtComposition:
+          example: 65
+          type: number
+        netDebtTotalSources:
+          example: 62
+          type: number
+        grossFinancialDebtNetWorth:
+          example: 63
+          type: number
+      type: object
+    SearchCompanyDataType_development:
+      properties:
+        ebitVariation:
+          example: 80
+          type: number
+        grossFinancialDebt:
+          example: 30
+          type: number
+        totalAssets:
+          example: 51
+          type: number
+        mol:
+          example: 55
+          type: number
+        addedValue:
+          example: 34
+          type: number
+        productionValue:
+          example: 87
+          type: number
+      type: object
+    SearchCompanyDataType_financialStatementKpi:
+      properties:
+        debtsTurnover:
+          example: 0.4065
+          type: number
+        totalInventoryTurnover:
+          example: 0.5974
+          type: number
+      type: object
+    SearchCompanyDataType_telcoAnalytics_landLineScore:
+      properties:
+        code:
+          example: TLCFX1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_telcoAnalytics_mobileScore:
+      properties:
+        code:
+          example: TLCMB1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_telcoAnalytics:
+      properties:
+        landLineScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_telcoAnalytics_landLineScore'
+        mobileScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_telcoAnalytics_mobileScore'
+      type: object
+    SearchCompanyDataType_seasonality_winter:
+      properties:
+        code:
+          example: SN0
+          type: string
+        description:
+          example: Has seasonality
+          type: string
+      type: object
+    SearchCompanyDataType_seasonality:
+      properties:
+        winter:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality_winter'
+        spring:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality_winter'
+        summer:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality_winter'
+        autumn:
+          $ref: '#/components/schemas/SearchCompanyDataType_seasonality_winter'
+      type: object
+    SearchCompanyDataType_creditNeeds_shortTermScore:
+      properties:
+        code:
+          example: PR1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_creditNeeds_equipmentLeaseScore:
+      properties:
+        code:
+          example: ND99
+          type: string
+        description:
+          example: N.d.
+          type: string
+      type: object
+    SearchCompanyDataType_creditNeeds_realEstateLeaseScore:
+      properties:
+        code:
+          example: PR3
+          type: string
+        description:
+          example: "3"
+          type: string
+      type: object
+    SearchCompanyDataType_creditNeeds_factoringScore:
+      properties:
+        code:
+          example: PR2
+          type: string
+        description:
+          example: "2"
+          type: string
+      type: object
+    SearchCompanyDataType_creditNeeds:
+      properties:
+        shortTermScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_shortTermScore'
+        mediumTermScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_shortTermScore'
+        carLeaseScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_shortTermScore'
+        equipmentLeaseScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_equipmentLeaseScore'
+        realEstateLeaseScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_realEstateLeaseScore'
+        factoringScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_creditNeeds_factoringScore'
+      type: object
+    SearchCompanyDataType_cribisDnBRating:
+      properties:
+        code:
+          example: RSK1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_governanceRiskIndex:
+      properties:
+        code:
+          example: GRIDX
+          type: string
+        description:
+          example: 1 - Risk low
+          type: string
+      type: object
+    SearchCompanyDataType_crifBusinessIndex:
+      properties:
+        code:
+          example: CBII1
+          type: string
+        description:
+          example: 1 - Risk low
+          type: string
+      type: object
+    SearchCompanyDataType_cribisScoreStateOwned:
+      properties:
+        code:
+          example: CBSPA99
+          type: string
+        description:
+          example: N.d.
+          type: string
+      type: object
+    SearchCompanyDataType_territorialScore:
+      properties:
+        code:
+          example: TRTSC1
+          type: string
+        description:
+          example: Good
+          type: string
+      type: object
+    SearchCompanyDataType_supplierScore:
+      properties:
+        code:
+          example: SPL1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_utilities_electricityScore:
+      properties:
+        code:
+          example: ELTC1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_utilities_gasScore:
+      properties:
+        code:
+          example: GASC1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_utilities:
+      properties:
+        electricityScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_utilities_electricityScore'
+        gasScore:
+          $ref: '#/components/schemas/SearchCompanyDataType_utilities_gasScore'
+      type: object
+    SearchCompanyDataType_retailAnalytics:
+      properties:
+        business:
+          example: 1
+          type: number
+        competitiveness:
+          example: 2
+          type: number
+        digitalization:
+          example: 3
+          type: number
+        premium:
+          example: 1
+          type: number
+        commercialPotential:
+          example: 3
+          type: number
+        competitionLevel:
+          example: 2
+          type: number
+        performance:
+          example: 3
+          type: number
+        restart:
+          example: 1
+          type: number
+      type: object
+    SearchCompanyDataType_internazionalizationScore:
+      properties:
+        code:
+          example: INT1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_digitalAttitudeScore:
+      properties:
+        code:
+          example: DA1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_innovationScore:
+      properties:
+        code:
+          example: INN1
+          type: string
+        description:
+          example: "1"
+          type: string
+      type: object
+    SearchCompanyDataType_companyIdentification:
+      properties:
+        dunsNumber:
+          example: "44559988"
+          type: string
+      type: object
+    SearchCompanyDataType_internationalIdentification:
+      properties:
+        holdingDunsNumber:
+          example: "44559988"
+          type: string
+        nationalParentDunsNumber:
+          example: "44559988"
+          type: string
+      type: object
+    SearchCompanyDataType_affidabilityScore:
+      properties:
+        code:
+          example: "1"
+          type: string
+        description:
+          example: Green
+          type: string
+      type: object
+    SearchCompanyDataType_semanticCluster:
+      properties:
+        code:
+          example: CL_ID_3_INGR
+          type: string
+        description:
+          example: Sports clothing and accessories - Wholesale
+          type: string
+      type: object
+    SearchCompanyDataType_assetsAggregateValues_inner:
+      properties:
+        code:
+          type: string
+        value:
+          type: number
+      type: object
+    DownloadCompanyDataType_portfolioInformation_areaManager:
+      properties:
+        id:
+          example: 00000000-0000-0000-0000-000000000002
+          type: string
+        description:
+          example: Mario Rossi
+          type: string
+      type: object
+    DownloadCompanyDataType_portfolioInformation_sales:
+      properties:
+        id:
+          example: 00000000-0000-0000-0000-000000000003
+          type: string
+        description:
+          example: Giulio Verdi
+          type: string
+      type: object
+    DownloadCompanyDataType_portfolioInformation_product:
+      properties:
+        id:
+          example: cfa41750-dcbd-4209-91a4-785fc15460e3
+          type: string
+        description:
+          example: T-shirt size M color Red
+          type: string
+      type: object
+    DownloadCompanyDataType_portfolioInformation_customVariables_inner:
+      properties:
+        index:
+          example: 0
+          type: number
+        value:
+          example: Forecast
+          type: string
+      type: object
+    DownloadCompanyDataType_portfolioInformation:
+      properties:
+        margoId:
+          example: ITA_02083271201_PROSPECT_O39770
+          type: string
+        identificationCode:
+          example: "2083271201"
+          type: string
+        companyPortfolioStatus:
+          example: Prospect
+          type: string
+        tags:
+          example:
+          - tag1
+          - tag2
+          - tag3
+          items:
+            type: string
+          type: array
+        amount:
+          example: 1000
+          type: number
+        areaManager:
+          $ref: '#/components/schemas/DownloadCompanyDataType_portfolioInformation_areaManager'
+        sales:
+          $ref: '#/components/schemas/DownloadCompanyDataType_portfolioInformation_sales'
+        product:
+          $ref: '#/components/schemas/DownloadCompanyDataType_portfolioInformation_product'
+        customVariables:
+          items:
+            $ref: '#/components/schemas/DownloadCompanyDataType_portfolioInformation_customVariables_inner'
+          type: array
+      type: object
+    DownloadCompanyDataType_ecofin:
+      properties:
+        balanceSheetDate:
+          format: date-time
+          type: string
+        turnoverRange:
+          $ref: '#/components/schemas/SearchCompanyDataType_ecofin_turnoverRange'
+        turnoverYear:
+          example: 2019
+          type: number
+        turnover:
+          example: 25000000
+          type: number
+        turnoverTrend:
+          example: 5.81
+          type: number
+        shareCapital:
+          example: 200000
+          type: number
+        netWorth:
+          example: 200000
+          type: number
+      type: object
+  securitySchemes:
+    Password:
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: https://iam-uat.crif.com/oauth2/token
+      type: oauth2
